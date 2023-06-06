@@ -1,11 +1,6 @@
-﻿using DictionaryApplication.Data;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
 using DictionaryApplication.Models;
 
 namespace DictionaryApplication.Data
@@ -21,9 +16,6 @@ namespace DictionaryApplication.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-            //Database.EnsureDeleted();
-            Database.EnsureCreated();
-            SeedData.Initialize(this);
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -130,17 +122,6 @@ namespace DictionaryApplication.Data
                 .WithOne(dlp => dlp.Translation)
                 .HasForeignKey(dlp => dlp.TranslationId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            //builder.Entity<Lexeme>()
-            //    .ToSqlQuery(@"CREATE TRIGGER TRG_DeleteLexemePairs 
-            //      ON Lexemes
-            //      INSTEAD OF DELETE
-            //      AS
-            //      BEGIN
-            //          DELETE lp
-            //          FROM LexemePairs lp
-            //          JOIN deleted d ON lp.Lexeme1Id = d.Id OR lp.Lexeme2Id = d.Id
-            //      END;");
 
             builder.Entity<LexemeTranslationPair>()
                 .ToTable(t => t.HasCheckConstraint("CHK_Dictionary_Languages_Not_Equal", "LexemeId <> TranslationId"))

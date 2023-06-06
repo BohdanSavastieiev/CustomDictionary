@@ -5,13 +5,24 @@ using DictionaryApplication.Services;
 using DictionaryApplication.Models;
 using DictionaryApplication.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+// Authenticate to Key Vault using the Azure Identity library
+var credential = new DefaultAzureCredential();
+
+// Create a secret client using the Key Vault URL and the Azure Identity credential
+var secretClient = new SecretClient(new Uri("https://customdictionarykeyvault.vault.azure.net/"), credential);
+
+// Retrieve the secret value (connection string)
+var secret = secretClient.GetSecret("CustomDictionaryDbConnectionString");
+
+//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(secret.Value.Value));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddTransient(typeof(IDbRepository<>), typeof(DbRepository<>));
@@ -31,11 +42,11 @@ builder.Services.AddRazorPages();
 builder.Services.Configure<IdentityOptions>(options =>
 {
     // Password settings.
-    options.Password.RequireDigit = false;
-    options.Password.RequireLowercase = false;
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
     options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequiredLength = 5;
+    options.Password.RequireUppercase = true;
+    options.Password.RequiredLength = 8;
     options.Password.RequiredUniqueChars = 0;
     options.SignIn.RequireConfirmedAccount = false;
 
@@ -57,6 +68,13 @@ builder.Services.AddSession(options =>
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    SeedData.Initialize(context);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
