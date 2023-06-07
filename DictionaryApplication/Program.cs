@@ -10,12 +10,14 @@ using Azure.Security.KeyVault.Secrets;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var credential = new DefaultAzureCredential();
-var secretClient = new SecretClient(new Uri("https://customdictionarykeyvault.vault.azure.net/"), credential);
-var secret = secretClient.GetSecret("CustomDictionaryDbConnectionString");
+//var credential = new DefaultAzureCredential();
+//var secretClient = new SecretClient(new Uri("https://customdictionarykeyvault.vault.azure.net/"), credential);
+//var secret = secretClient.GetSecret("CustomDictionaryDbConnectionString");
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(secret.Value.Value, 
+    options.UseSqlServer(connectionString, 
         sqlServerOptionsAction: sqlOptions =>
         {
              sqlOptions.EnableRetryOnFailure(
@@ -24,8 +26,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 errorNumbersToAdd: null);
         }));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-builder.Logging.AddConsole();
 
 builder.Services.AddTransient(typeof(IDbRepository<>), typeof(DbRepository<>));
 builder.Services.AddScoped<IUserDictionaryRepository, UserDictionaryRepository>();
@@ -65,7 +65,6 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromSeconds(1800);
-    //options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
 
@@ -78,20 +77,17 @@ using (var scope = app.Services.CreateScope())
     SeedData.Initialize(context);
 }
 
-app.UseDeveloperExceptionPage();
-app.UseHsts();
-
-//// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseMigrationsEndPoint();
-//}
-//else
-//{
-//    app.UseExceptionHandler("/Error");
-//    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-//    app.UseHsts();
-//}
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseMigrationsEndPoint();
+}
+else
+{
+    app.UseExceptionHandler("/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
