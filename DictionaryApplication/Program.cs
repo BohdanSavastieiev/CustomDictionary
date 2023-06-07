@@ -10,14 +10,12 @@ using Azure.Security.KeyVault.Secrets;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//var credential = new DefaultAzureCredential();
-//var secretClient = new SecretClient(new Uri("https://customdictionarykeyvault.vault.azure.net/"), credential);
-//var secret = secretClient.GetSecret("CustomDictionaryDbConnectionString");
-
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var credential = new DefaultAzureCredential();
+var secretClient = new SecretClient(new Uri("https://customdictionarykeyvault.vault.azure.net/"), credential);
+var secret = secretClient.GetSecret("CustomDictionaryDbConnectionString");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString, 
+    options.UseSqlServer(secret.Value.Value, 
         sqlServerOptionsAction: sqlOptions =>
         {
              sqlOptions.EnableRetryOnFailure(
