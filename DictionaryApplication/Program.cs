@@ -25,6 +25,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         }));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+builder.Logging.AddConsole();
+
 builder.Services.AddTransient(typeof(IDbRepository<>), typeof(DbRepository<>));
 builder.Services.AddScoped<IUserDictionaryRepository, UserDictionaryRepository>();
 builder.Services.AddScoped<ILexemeDetailsRepository, LexemeDetailsRepository>();
