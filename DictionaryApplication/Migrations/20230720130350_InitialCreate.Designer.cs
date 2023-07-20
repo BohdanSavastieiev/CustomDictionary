@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DictionaryApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230720102522_InitialCreate")]
+    [Migration("20230720130350_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -21,7 +21,7 @@ namespace DictionaryApplication.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("Dict")
-                .HasAnnotation("ProductVersion", "7.0.5")
+                .HasAnnotation("ProductVersion", "7.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
