@@ -6,14 +6,11 @@ using DictionaryApplication.Models;
 using DictionaryApplication.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Azure.Identity;
-using Azure.Security.KeyVault.Secrets;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//var credential = new DefaultAzureCredential();
-//var secretClient = new SecretClient(new Uri("https://customdictionarykeyvault.vault.azure.net/"), credential);
-//var secret = secretClient.GetSecret("CustomDictionaryDbConnectionString");
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -34,11 +31,12 @@ builder.Services.AddScoped<ILexemeInputRepository, LexemeInputRepository>();
 builder.Services.AddScoped<ILexemeTestAttemptRepository, LexemeTestAttemptRepository>();
 
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<ApplicationUser>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultUI()
     .AddDefaultTokenProviders();
 builder.Services.AddScoped<UserManager<ApplicationUser>>();
+
 builder.Services.AddRazorPages();
 
 builder.Services.Configure<IdentityOptions>(options =>
@@ -50,7 +48,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireUppercase = true;
     options.Password.RequiredLength = 8;
     options.Password.RequiredUniqueChars = 0;
-    options.SignIn.RequireConfirmedAccount = false;
+    options.SignIn.RequireConfirmedAccount = true;
 
     // User settings.
     options.User.AllowedUserNameCharacters =
@@ -59,6 +57,8 @@ builder.Services.Configure<IdentityOptions>(options =>
 });
 
 builder.Services.AddScoped<KnowledgeTestService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+
 
 builder.Services.AddDistributedMemoryCache();
 
