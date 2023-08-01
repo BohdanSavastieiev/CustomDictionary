@@ -27,7 +27,6 @@ namespace DictionaryApplication.Pages.UserDictionarySelector
             _userDictionaryRepository = userDictionaryRepository;
         }
 
-        //public List<UserDictionary> UserDictionaries { get; set; } = null!;
         public List<(UserDictionary UserDictionary, int TotalLexemes)> UserDictionaries { get; set; } = null!;
 
         public async Task<IActionResult> OnGetAsync()
