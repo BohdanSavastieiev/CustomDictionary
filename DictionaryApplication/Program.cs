@@ -6,11 +6,24 @@ using DictionaryApplication.Models;
 using DictionaryApplication.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+
+var keyVaultEndpoint = "https://dictionarykeyvault.vault.azure.net/";
+var secretClient = new SecretClient(new Uri(keyVaultEndpoint), new DefaultAzureCredential());
+var emailHostSecret = secretClient.GetSecret("EmailHost");
+var emailUsernameSecret = secretClient.GetSecret("EmailUsername");
+var emailPasswordSecret = secretClient.GetSecret("EmailPassword");
+builder.Configuration["EmailHost"] = emailHostSecret.Value.Value;
+builder.Configuration["EmailUsername"] = emailUsernameSecret.Value.Value;
+builder.Configuration["EmailPassword"] = emailPasswordSecret.Value.Value;
+
+var connectionString = secretClient.GetSecret("DefaultConnection").Value.Value
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+//?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
