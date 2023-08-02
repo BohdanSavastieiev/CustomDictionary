@@ -41,7 +41,9 @@
                     @Html.DisplayFor(modelItem => dict.UserDictionary.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => dict.UserDictionary.Description)
+                    @if(dict.UserDictionary.Description != null){
+                        @Html.Raw(dict.UserDictionary.Description.Replace("\n", "<br />"));
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => dict.UserDictionary.StudiedLanguage.LangCode)/@Html.DisplayFor(modelItem => dict.UserDictionary.TranslationLanguage.LangCode)

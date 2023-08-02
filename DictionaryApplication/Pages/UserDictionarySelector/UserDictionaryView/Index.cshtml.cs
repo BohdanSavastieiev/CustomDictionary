@@ -35,6 +35,11 @@ namespace DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView
             LexemeDetailsList = new LexemeDetailsList();
             LexemeDetailsList.LexemeDetails = await _lexemeDetailsRepository.GetAllAsync(userDictionaryId);
 
+            if (LexemeDetailsList.LexemeDetails.Count() == 0)
+            {
+                return RedirectToPage("Create", new { userDictionaryId = userDictionaryId});
+            }
+
             // обработка сортировки
             SortOrder = sortOrder;
             switch (SortOrder)

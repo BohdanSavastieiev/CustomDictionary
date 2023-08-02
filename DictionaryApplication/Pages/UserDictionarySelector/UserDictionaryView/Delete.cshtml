@@ -35,7 +35,7 @@
                     Description
                 </dt>
                 <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.LexemeInput.Description)
+                    @Html.Raw(Model.LexemeInput.Description.Replace("\n", "<br />"))
                 </dd>
             }
         </dl>
@@ -47,41 +47,3 @@
     </div>
 </div>
 
-<div>
-    <hr />
-    <table>
-        <thead>
-            <tr>
-                <td>Studied Lexeme (@Model.UserDictionary.StudiedLanguage.LangCode)</td>
-                <td>Translations (@Model.UserDictionary.TranslationLanguage.LangCode)</td>
-            </tr>
-        </thead>
-        <tbody class="table" id="tbbody">
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => Model.LexemeInput.Lexeme)
-                </td>
-                <td>
-                    @Model.LexemeInput.Translations[0]
-                </td>
-            </tr>
-            @if (Model.LexemeInput.Translations.Count > 1)
-            {
-                for (int i = 1; i < Model.LexemeInput.Translations.Count; i++)
-                {
-                    <tr>
-                        <td></td>
-                        <td>
-                            @Model.LexemeInput.Translations[i]
-                        </td>
-                    </tr>
-                }
-            }
-        </tbody>
-    </table>
-
-    <form method="post">
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-page="./Index" asp-route-userDictionaryId="@Model.UserDictionary.Id" asp-route-pageId="@Model.CurrentPage">Back to List</a>
-    </form>
-</div>

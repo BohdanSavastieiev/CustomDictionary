@@ -89,9 +89,9 @@
                     </td>
                     <td class="right-td">
                         <a class="small-link lexeme-link" asp-page="./Edit" asp-route-userDictionaryId="@Model.UserDictionary.Id"
-                   asp-route-lexemeId="@item.Lexeme.Id" asp-route-pageId="@Model.LexemeDetailsList.PagingInfo.CurrentPage">Edit</a>
+                           asp-route-lexemeId="@item.Lexeme.Id" asp-route-pageId="@Model.LexemeDetailsList.PagingInfo.CurrentPage">Edit</a>
                         <a class="small-link lexeme-link" asp-page="./Delete" asp-route-userDictionaryId="@Model.UserDictionary.Id"
-                   asp-route-lexemeId="@item.Lexeme.Id" asp-route-pageId="@Model.LexemeDetailsList.PagingInfo.CurrentPage">Delete</a>
+                           asp-route-lexemeId="@item.Lexeme.Id" asp-route-pageId="@Model.LexemeDetailsList.PagingInfo.CurrentPage">Delete</a>
                     </td>
                 </tr>
                 {
@@ -101,7 +101,7 @@
                         <tr class="description-row" style="display: none;">
                             <td colspan="5">
                                 <div class="description-box">
-                                    @Html.DisplayFor(modelItem => item.Lexeme.Description)
+                                    @Html.Raw(item.Lexeme.Description.Replace("\n", "<br />"))
                                 </div>
                             </td>
                         </tr>
@@ -142,8 +142,10 @@
     <script>
 
         $(function () {
-            $(".table-row-link").click(function () {
-                $(this).next(".description-row").toggle();
+            $(".table-row-link").click(function (event) {
+                if (!$(event.target).is(".lexeme-link")) {
+                    $(this).next(".description-row").toggle();
+                }
             });
         });
 

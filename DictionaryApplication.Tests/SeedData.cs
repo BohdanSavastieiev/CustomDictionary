@@ -46,7 +46,6 @@ public static class SeedData
             }
             else
             {
-                // Обработка ошибок при создании пользователя
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 throw new ApplicationException($"Ошибка при создании пользователя: {errors}");
             }
