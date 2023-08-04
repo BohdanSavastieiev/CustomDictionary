@@ -62,7 +62,6 @@ namespace DictionaryApplication.Pages.KnowledgeTest
                 lexemeTestAttempts.First(x => x.Lexeme.Id == id).IsCorrectAnswer = true;
             }
 
-            await _knowledgeTestService.SetResults(lexemeTestAttempts);
             HttpContext.Session.SetList("lexemeTestAttempts", lexemeTestAttempts);
 
             return RedirectToPage("TestResult");

@@ -12,13 +12,19 @@ namespace DictionaryApplication.Pages.KnowledgeTest
     [Authorize]
     public class TestResultModel : PageModel
     {
-        public TestResultModel() {}
-
+        private KnowledgeTestService _knowledgeTestService;
+        public TestResultModel(KnowledgeTestService knowledgeTestService) 
+        {
+            _knowledgeTestService = knowledgeTestService;
+        }
         public async Task<IActionResult> OnGetAsync()
         {
             await HttpContext.Session.LoadAsync();
 
             var lexemeTestAttempts = HttpContext.Session.GetList<LexemeTestAttempt>("lexemeTestAttempts");
+
+            await _knowledgeTestService.SetResults(lexemeTestAttempts);
+
             int totalAnswers = lexemeTestAttempts.Count;
             int totalCorrectAnswers = lexemeTestAttempts.Count(ta => ta.IsCorrectAnswer);
             double correctAnswersPercentage = Math.Round((double)totalCorrectAnswers / totalAnswers * 100, 2);
