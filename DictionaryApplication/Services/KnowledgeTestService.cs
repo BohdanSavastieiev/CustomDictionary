@@ -97,17 +97,21 @@ namespace DictionaryApplication.Services
 
             for (int i = 0; i < correctTranslations.Length; i++)
             {
-                correctTranslations[i] = correctTranslations[i].ToLower().Trim().Replace(",", "");
-
-                if (correctTranslations[i].Equals(userAnswer, StringComparison.OrdinalIgnoreCase))
+                var innerTranslations = correctTranslations[i].Split(',');
+                foreach (var transl in innerTranslations)
                 {
-                    return true;
-                }
+                    var tr = transl.ToLower().Trim().Replace(",", "");
 
-                var levensteinDistance = LevenshteinDistance(correctTranslations[i], userAnswer);
-                if (levensteinDistance <= 1)
-                {
-                    return true;
+                    if (tr.Equals(userAnswer, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
+
+                    var levensteinDistance = LevenshteinDistance(tr, userAnswer);
+                    if (levensteinDistance <= 1)
+                    {
+                        return true;
+                    }
                 }
             }
 
