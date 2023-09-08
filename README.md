@@ -6,25 +6,25 @@ Custom Dictionary is a web-based platform designed using ASP.NET, dedicated to a
 
 ---
 ## Key Features
-### User Registration & Verification:
+### 1. User Registration & Verification:
 
 Sign up using an email and password.
 Receive a confirmation email to authenticate the registration.
 
-### User Login & Password Management:
+### 2. User Login & Password Management:
 
 Access the platform using registered credentials.
 Utilize the password reset feature in case of forgotten passwords. A reset link will be dispatched to the registered email.
 
-### Custom Dictionaries Creation:
+### 3. Custom Dictionaries Creation:
 
 Organize and manage language materials by creating personalized dictionaries.
 
-### Vocabulary Management:
+### 4. Vocabulary Management:
 
 Enrich dictionaries by adding new words along with their translations.
 
-### Knowledge Assessment:
+### 5. Knowledge Assessment:
 
 Evaluate language proficiency through knowledge tests.
 Receive feedback on performance for continuous improvement.
