@@ -1,21 +1,41 @@
-# CustomDictionary
-## Description
-This is a web application built using ASP.NET Core Razor Pages. The primary purpose of this application is to help users learn foreign languages. It allows users to register, login, create custom dictionaries, add words and their translations to the dictionaries, and take knowledge tests to assess their language proficiency.
+# Custom Dictionary Web Application
+## Overview
+Custom Dictionary is a web-based platform designed using ASP.NET, dedicated to assisting users in their journey to master foreign languages. It offers a suite of features that not only facilitate vocabulary building but also assess language proficiency.
 
-You can use the application on this domain: [customdictionary.azurewebsites.net](https://customdictionary.azurewebsites.net)
+[Access the Application Here](https://customdictionary.azurewebsites.net/)
 
-## Features
-User Registration: New users can sign up for an account using their email and password. Confirmation emails are sent to verify their registration.
-User Login: Registered users can log in using their credentials and access the app's features. Users can reset their passwords if they forget them. A password reset email is sent to their registered email address.
-Custom Dictionaries: Users can create their own dictionaries for organizing and managing their language learning materials.
-Vocabulary Management: Users can add new words and their translations to their custom dictionaries.
-Knowledge Testing: Users can test their language skills through knowledge tests. The app provides feedback on the test results.
+---
+## Key Features
+### 1. User Registration & Verification:
 
-## The Language Learning App is built using the following technologies:
+Sign up using an email and password.
+Receive a confirmation email to authenticate the registration.
 
-ASP.NET Core;
-Razor Pages;
-SQL Server;
-Entity Framework Core;
-Mailkit;
-XUnit.
+### 2. User Login & Password Management:
+
+Access the platform using registered credentials.
+Utilize the password reset feature in case of forgotten passwords. A reset link will be dispatched to the registered email.
+
+### 3. Custom Dictionaries Creation:
+
+Organize and manage language materials by creating personalized dictionaries.
+
+### 4. Vocabulary Management:
+
+Enrich dictionaries by adding new words along with their translations.
+
+### 5. Knowledge Assessment:
+
+Evaluate language proficiency through knowledge tests.
+Receive feedback on performance for continuous improvement.
+
+---
+## Technologies
+- ASP.NET
+- Razor Pages
+- HTML, CSS, JavaScript
+- SQL Server
+- Entity Framework
+- Mailkit
+- xUnit
+- Azure
