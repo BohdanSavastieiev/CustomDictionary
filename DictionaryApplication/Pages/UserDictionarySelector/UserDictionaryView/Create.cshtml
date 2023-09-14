@@ -18,7 +18,9 @@
                     <table>
                         <thead>
                             <tr>
-                                <th class="col-md-3">Studied Lexeme (@Model.UserDictionary.StudiedLanguage.LangCode)</th>
+                                <th class="col-md-3">Studied Lexeme (@Model.UserDictionary.StudiedLanguage.LangCode)
+                                    <button type="button" id="findInformationButton" class="big-btn add-translation">Find Information</button>
+                                </th>
                                 <th class="col-md-3">Translations (@Model.UserDictionary.TranslationLanguage.LangCode)</th>
                                 <th class="col-md-1"></th>
                             </tr>
@@ -72,6 +74,46 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             autosize(document.querySelectorAll('.autosize'));
+        });
+
+        document.querySelector("[asp-for='LexemeInput.Lexeme']").addEventListener('input', function () {
+            if (this.value) {
+                document.getElementById('findInformationButton').disabled = false;
+            } else {
+                document.getElementById('findInformationButton').disabled = true;
+            }
+        });
+
+
+
+        // Отправка асинхронного POST-запроса при нажатии на кнопку
+        document.getElementById('findInformationButton').addEventListener('click', function () {
+            // Получите данные, которые вы хотите отправить
+            const lexeme = document.querySelector("[asp-for='LexemeInput.Lexeme']").value;
+            const userDictionaryId = @Model.UserDictionary.Id; // Получите значение userDictionaryId откуда-то
+
+        // Создайте объект с данными для отправки
+        const data = {
+            lexeme: lexeme,
+            userDictionaryId: userDictionaryId
+        };
+
+        // Отправьте POST-запрос
+        fetch('/YourEndpoint', { // замените '/YourEndpoint' на ваш реальный endpoint
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                // Обработайте ответ сервера здесь
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
         });
 
         $(document).ready(function () {

@@ -1,4 +1,5 @@
 ﻿using DictionaryApplication.DTOs;
+using DictionaryApplication.Models.DbModels;
 
 namespace DictionaryApplication.Models
 {
@@ -16,6 +17,6 @@ namespace DictionaryApplication.Models
         public ICollection<LexemeTranslationPair>? LexemePairs { get; set; }
         public ICollection<LexemeTranslationPair>? TranslationPairs { get; set; }
         public string? Transcription { get; set; }
-        public ICollection<LexemeTranslation>? LexemeTranslations { get; set; }
+        public ICollection<LexemeInformation>? LexemeInformations { get; set; }
     }
 }

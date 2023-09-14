@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using DictionaryApplication.Models;
+using DictionaryApplication.Models.DbModels;
+using DictionaryApplication.DTOs;
 
 namespace DictionaryApplication.Data
 {
@@ -12,6 +14,9 @@ namespace DictionaryApplication.Data
         public DbSet<UserDictionary> UserDictionaries { get; set; }
         public DbSet<Lexeme> Lexemes { get; set; }
         public DbSet<LexemeTranslationPair> LexemeTranslationPairs { get; set; }
+        public DbSet<LexemeInformation> LexemeInformations { get; set; }
+        public DbSet<UsageExample> UsageExamples { get; set; }
+        public DbSet<RelatedLexeme> RelatedLexemes { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -100,6 +105,10 @@ namespace DictionaryApplication.Data
                 .HasMaxLength(1000);
 
             builder.Entity<Lexeme>()
+                .Property(l => l.Transcription)
+                .HasMaxLength(100);
+
+            builder.Entity<Lexeme>()
                 .Property(l => l.TotalTestAttempts)
                 .HasDefaultValue(0);
 
@@ -127,6 +136,25 @@ namespace DictionaryApplication.Data
                 .ToTable(t => t.HasCheckConstraint("CHK_Dictionary_Languages_Not_Equal", "LexemeId <> TranslationId"))
                 .HasIndex(e => new { e.LexemeId, e.TranslationId })
                 .IsUnique();
+
+            // LexemeInformation configuring
+            builder.Entity<Lexeme>()
+                .HasMany(ud => ud.LexemeInformations)
+                .WithOne(dlp => dlp.TranslatedLexeme)
+                .HasForeignKey(dlp => dlp.TranslatedLexemeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<LexemeInformation>()
+                .HasMany(ud => ud.Examples)
+                .WithOne(dlp => dlp.LexemeInformation)
+                .HasForeignKey(dlp => dlp.LexemeInformationId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<LexemeInformation>()
+                .HasMany(ud => ud.RelatedLexemes)
+                .WithOne(dlp => dlp.LexemeInformation)
+                .HasForeignKey(dlp => dlp.LexemeInformationId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             RenameIdentityTables(builder);
         }

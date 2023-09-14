@@ -9,10 +9,10 @@ namespace DictionaryApplication.Models
         public List<string> Translations { get; set; } = null!;
         public string? Description { get; set; }
         public string? Transcription { get; set; }
-        public List<LexemeTranslation> LexemeTranslations { get; set; }
+        public List<LexemeInformation> LexemeInformations { get; set; }
         public LexemeInput()
         {
-            LexemeTranslations = new List<LexemeTranslation>();
+            LexemeInformations = new List<LexemeInformation>();
         }
     }
 }
