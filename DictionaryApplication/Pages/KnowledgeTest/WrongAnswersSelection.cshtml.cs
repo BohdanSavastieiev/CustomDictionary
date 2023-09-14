@@ -26,7 +26,7 @@ namespace DictionaryApplication.Pages.KnowledgeTest
         public IActionResult OnGet()
         {
             var lexemeTestAttempts = HttpContext.Session.GetList<LexemeTestAttempt>("lexemeTestAttempts");
-            var knowledgeTestParameters = HttpContext.Session.GetKnowledgeTest("knowledgeTestParameters");
+            var knowledgeTestParameters = HttpContext.Session.GetObject<KnowledgeTestParameters>("knowledgeTestParameters");
 
             if (lexemeTestAttempts == null || knowledgeTestParameters == null)
             {

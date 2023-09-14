@@ -21,19 +21,21 @@ namespace DictionaryApplication.Extensions
             session.SetString(key, JsonConvert.SerializeObject(value));
         }
 
-        public static KnowledgeTestParameters GetKnowledgeTest(this ISession session, string key)
+        public static T? GetObject<T>(this ISession session, string key)
         {
             var data = session.GetString(key);
             if (data == null)
             {
-                return null;
+                return default(T);
             }
-            return JsonConvert.DeserializeObject<KnowledgeTestParameters>(data);
+            return JsonConvert.DeserializeObject<T>(data);
         }
 
-        public static void SetKnowledgeTest(this ISession session, string key, KnowledgeTestParameters value)
+        public static void SetObject<T>(this ISession session, string key, T value)
         {
             session.SetString(key, JsonConvert.SerializeObject(value));
         }
+
+
     }
 }

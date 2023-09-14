@@ -7,6 +7,7 @@ using DictionaryApplication.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using DictionaryApplication.Clients;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,8 +70,16 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.User.RequireUniqueEmail = true;
 });
 
+builder.Services.AddHttpClient("LingvoInfoApi", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["LingvoInfoApiSettings:BaseUrl"]
+        ?? throw new InvalidOperationException("BaseUrl for LingvoInfo API is not configured."));
+});
+
 builder.Services.AddScoped<KnowledgeTestService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddTransient<ILingvoInfoService, LingvoInfoService>();
+
 
 
 builder.Services.AddDistributedMemoryCache();

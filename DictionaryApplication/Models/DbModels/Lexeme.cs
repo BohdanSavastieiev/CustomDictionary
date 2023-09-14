@@ -1,4 +1,6 @@
-﻿namespace DictionaryApplication.Models
+﻿using DictionaryApplication.DTOs;
+
+namespace DictionaryApplication.Models
 {
     public class Lexeme
     {
@@ -13,5 +15,7 @@
         public int CorrectTestAttempts { get; set; }
         public ICollection<LexemeTranslationPair>? LexemePairs { get; set; }
         public ICollection<LexemeTranslationPair>? TranslationPairs { get; set; }
+        public string? Transcription { get; set; }
+        public ICollection<LexemeTranslation>? LexemeTranslations { get; set; }
     }
 }

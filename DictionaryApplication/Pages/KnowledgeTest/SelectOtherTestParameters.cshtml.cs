@@ -60,7 +60,7 @@ namespace DictionaryApplication.Pages.KnowledgeTest
 
             await HttpContext.Session.LoadAsync();
 
-            HttpContext.Session.SetKnowledgeTest("knowledgeTestParameters", TestParameters);
+            HttpContext.Session.SetObject<KnowledgeTestParameters>("knowledgeTestParameters", TestParameters);
 
             var lexemeTestAttempts = await _knowledgeTestService.GetLexemeTestAttemptsAsync(TestParameters);
             HttpContext.Session.SetList("lexemeTestAttempts", lexemeTestAttempts);
