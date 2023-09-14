@@ -1,8 +1,6 @@
-# Custom Dictionary Web Application
+# Custom Dictionary
 ## Overview
 Custom Dictionary is a web-based platform designed using ASP.NET, dedicated to assisting users in their journey to master foreign languages. It offers a suite of features that not only facilitate vocabulary building but also assess language proficiency.
-
-[Access the Application Here](https://customdictionary.azurewebsites.net/)
 
 ---
 ## Key Features
