@@ -4,6 +4,7 @@ using DictionaryApplication.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DictionaryApplication.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230915051927_AddWordForms")]
+    partial class AddWordForms
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -191,7 +194,7 @@ namespace DictionaryApplication.Migrations
 
                     b.HasIndex("LexemeId");
 
-                    b.ToTable("WordForms", "Dict");
+                    b.ToTable("WordForm", "Dict");
                 });
 
             modelBuilder.Entity("DictionaryApplication.Models.Language", b =>
@@ -478,7 +481,7 @@ namespace DictionaryApplication.Migrations
                     b.HasOne("DictionaryApplication.Models.Lexeme", "TranslatedLexeme")
                         .WithMany("LexemeInformations")
                         .HasForeignKey("TranslatedLexemeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("TranslatedLexeme");
@@ -489,7 +492,7 @@ namespace DictionaryApplication.Migrations
                     b.HasOne("DictionaryApplication.Models.DbModels.LexemeInformation", "LexemeInformation")
                         .WithMany("RelatedLexemes")
                         .HasForeignKey("LexemeInformationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("LexemeInformation");
@@ -500,7 +503,7 @@ namespace DictionaryApplication.Migrations
                     b.HasOne("DictionaryApplication.Models.DbModels.LexemeInformation", "LexemeInformation")
                         .WithMany("Examples")
                         .HasForeignKey("LexemeInformationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("LexemeInformation");

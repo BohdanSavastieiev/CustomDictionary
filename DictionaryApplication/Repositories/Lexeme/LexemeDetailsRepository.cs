@@ -1,6 +1,8 @@
 ﻿using DictionaryApplication.Data;
+using DictionaryApplication.DTOs;
 using DictionaryApplication.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DictionaryApplication.Repositories
 {
@@ -17,46 +19,47 @@ namespace DictionaryApplication.Repositories
         {
             if (lexeme == null)
             {
-                throw new ArgumentException("Lexeme with id specified was not found.");
+                throw new ArgumentException("Lexeme with Id specified was not found.");
             }
         }
-        public async Task<LexemeDetails?> GetByIdAsync(int id)
+        public async Task<LexemeDetailsDto?> GetByIdAsync(int id)
         {
             var lexeme = await _context.Lexemes.FirstOrDefaultAsync(x => x.Id == id);
             CheckLexeme(lexeme);
 
-            var result = new LexemeDetails(_context, lexeme.Id);
+            var result = new LexemeDetailsDto(_context, lexeme.Id);
             return result;
         }
 
-        public async Task<List<LexemeDetails>> GetAllAsync(params int[] userDictionaryIds)
+        public async Task<List<LexemeDetailsDto>> GetAllAsync(params int[] userDictionaryIds)
         {
             List<int> studiedLexemeIds = await _context.Lexemes.Where(x => userDictionaryIds.Contains(x.DictionaryId)
-                && x.LexemePairs != null && x.LexemePairs.Count > 0).Select(x => x.Id).ToListAsync();
-            var result = new List<LexemeDetails>();
+                && (x.LexemePairs != null && x.LexemePairs.Count > 0 || x.LexemeInformations.Any()))
+                .Select(x => x.Id).ToListAsync();
+            var result = new List<LexemeDetailsDto>();
             foreach (var id in studiedLexemeIds)
             {
-                result.Add(new LexemeDetails(_context, id));
+                result.Add(new LexemeDetailsDto(_context, id));
             }
             return result;
         }
-        public async Task<(List<LexemeDetails>, int)> GetAllFilterAsync(int skip, int take, params int[] userDictionaryIds)
+        public async Task<(List<LexemeDetailsDto>, int)> GetAllFilterAsync(int skip, int take, params int[] userDictionaryIds)
         {
-            List<LexemeDetails> all = await GetAllAsync(userDictionaryIds);
+            List<LexemeDetailsDto> all = await GetAllAsync(userDictionaryIds);
             return await GetFilteredForPagingAsync(all, skip, take);
         }
 
-        public async Task<(List<LexemeDetails>, int)> GetAllFilterAsync(List<LexemeDetails> lexemeDetails, int skip, int take)
+        public async Task<(List<LexemeDetailsDto>, int)> GetAllFilterAsync(List<LexemeDetailsDto> lexemeDetails, int skip, int take)
         {
             return await GetFilteredForPagingAsync(lexemeDetails, skip, take);
         }
 
-        private static async Task<(List<LexemeDetails>, int)> GetFilteredForPagingAsync(List<LexemeDetails> lexemeDetails, int skip, int take)
+        private static async Task<(List<LexemeDetailsDto>, int)> GetFilteredForPagingAsync(List<LexemeDetailsDto> lexemeDetails, int skip, int take)
         {
-            List<LexemeDetails> relevant = lexemeDetails.Skip(skip).Take(take).ToList();
+            List<LexemeDetailsDto> relevant = lexemeDetails.Skip(skip).Take(take).ToList();
             var total = lexemeDetails.Count;
 
-            (List<LexemeDetails>, int) result = (relevant, total);
+            (List<LexemeDetailsDto>, int) result = (relevant, total);
 
             return result;
         }

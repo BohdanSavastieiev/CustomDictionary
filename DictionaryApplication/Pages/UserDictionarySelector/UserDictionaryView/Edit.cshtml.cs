@@ -7,8 +7,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DictionaryApplication.Data;
-using DictionaryApplication.Models;
 using DictionaryApplication.Repositories;
+using DictionaryApplication.DTOs;
+using DictionaryApplication.Extensions;
 
 namespace DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView
 {
@@ -23,7 +24,7 @@ namespace DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView
         }
 
         [BindProperty]
-        public LexemeInput LexemeInput { get; set; } = null!;
+        public LexemeInputDto LexemeInput { get; set; } = null!;
 
 
         public async Task<IActionResult> OnGetAsync(int userDictionaryId, int lexemeId)
@@ -37,6 +38,8 @@ namespace DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView
             else
             {
                 LexemeInput = lexemeInput;
+                HttpContext.Session.SetObject<LexemeInputDto>("lexemeInput", lexemeInput);
+
             }
 
             return Page();
@@ -46,6 +49,7 @@ namespace DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView
         // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync(int userDictionaryId, int lexemeId)
         {
+
             if (!ModelState.IsValid)
             {
                 return Page();

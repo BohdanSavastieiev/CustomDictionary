@@ -19,7 +19,6 @@
                         <thead>
                             <tr>
                                 <th class="col-md-3">Studied Lexeme (@Model.UserDictionary.StudiedLanguage.LangCode)
-                                    <button type="button" id="findInformationButton" class="big-btn add-translation">Find Information</button>
                                 </th>
                                 <th class="col-md-3">Translations (@Model.UserDictionary.TranslationLanguage.LangCode)</th>
                                 <th class="col-md-1"></th>
@@ -30,6 +29,7 @@
                                 <td>
                                     <input asp-for="LexemeInput.Lexeme" class="form-control small-input" />
                                     <span asp-validation-for="LexemeInput.Lexeme" class="text-danger"></span>
+
                                 </td>
                                 <td>
                                     <input type="text" name="LexemeInput.Translations[0]" class="form-control small-input translations" required />
@@ -48,6 +48,10 @@
                     <label asp-for="LexemeInput.Description" class="control-label">Description (Optional)</label>
                     <textarea asp-for="LexemeInput.Description" class="form-control autosize"></textarea>
                     <span asp-validation-for="LexemeInput.Description" class="text-danger"></span>
+                </div>
+
+                <div class="form-group text-center">
+                    <button type="button" id="findInfoBtn" class="big-btn" disabled>Find Information</button>
                 </div>
 
                 <div class="form-group text-center">
@@ -74,46 +78,6 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             autosize(document.querySelectorAll('.autosize'));
-        });
-
-        document.querySelector("[asp-for='LexemeInput.Lexeme']").addEventListener('input', function () {
-            if (this.value) {
-                document.getElementById('findInformationButton').disabled = false;
-            } else {
-                document.getElementById('findInformationButton').disabled = true;
-            }
-        });
-
-
-
-        // Отправка асинхронного POST-запроса при нажатии на кнопку
-        document.getElementById('findInformationButton').addEventListener('click', function () {
-            // Получите данные, которые вы хотите отправить
-            const lexeme = document.querySelector("[asp-for='LexemeInput.Lexeme']").value;
-            const userDictionaryId = @Model.UserDictionary.Id; // Получите значение userDictionaryId откуда-то
-
-        // Создайте объект с данными для отправки
-        const data = {
-            lexeme: lexeme,
-            userDictionaryId: userDictionaryId
-        };
-
-        // Отправьте POST-запрос
-        fetch('/YourEndpoint', { // замените '/YourEndpoint' на ваш реальный endpoint
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                // Обработайте ответ сервера здесь
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
         });
 
         $(document).ready(function () {
@@ -221,6 +185,22 @@
                 }
             });
 
+
+            // Проверка поля "Studied Lexeme" при каждом изменении
+            $("input[name='LexemeInput.Lexeme']").on('input', function () {
+                if ($(this).val().trim().length > 0) {
+                    $("#findInfoBtn").removeAttr("disabled");
+                } else {
+                    $("#findInfoBtn").attr("disabled", "disabled");
+                }
+            });
+
+            // Перенаправление пользователя при нажатии на кнопку "Find Information"
+            $("#findInfoBtn").click(function () {
+                var lexemeValue = $("input[name='LexemeInput.Lexeme']").val().trim();
+                var userDictionaryId = "@Model.UserDictionary.Id";
+                window.location.href = "/UserDictionarySelector/UserDictionaryView/CreateWithData?userDictionaryId=" + userDictionaryId + "&lexeme=" + lexemeValue;
+            });
         });
 
     </script>

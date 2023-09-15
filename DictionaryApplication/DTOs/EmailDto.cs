@@ -1,4 +1,4 @@
-﻿namespace DictionaryApplication.Models
+﻿namespace DictionaryApplication.DTOs
 {
     public class EmailDto
     {

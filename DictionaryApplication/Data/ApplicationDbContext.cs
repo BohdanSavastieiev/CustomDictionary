@@ -17,6 +17,7 @@ namespace DictionaryApplication.Data
         public DbSet<LexemeInformation> LexemeInformations { get; set; }
         public DbSet<UsageExample> UsageExamples { get; set; }
         public DbSet<RelatedLexeme> RelatedLexemes { get; set; }
+        public DbSet<Models.DbModels.WordForm> WordForms { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -116,6 +117,7 @@ namespace DictionaryApplication.Data
                 .Property(l => l.CorrectTestAttempts)
                 .HasDefaultValue(0);
 
+
             // LexemeTranslationPair configuring
             builder.Entity<LexemeTranslationPair>()
                 .HasKey(lp => new { lp.LexemeId, lp.TranslationId });
@@ -142,19 +144,19 @@ namespace DictionaryApplication.Data
                 .HasMany(ud => ud.LexemeInformations)
                 .WithOne(dlp => dlp.TranslatedLexeme)
                 .HasForeignKey(dlp => dlp.TranslatedLexemeId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<LexemeInformation>()
                 .HasMany(ud => ud.Examples)
                 .WithOne(dlp => dlp.LexemeInformation)
                 .HasForeignKey(dlp => dlp.LexemeInformationId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<LexemeInformation>()
                 .HasMany(ud => ud.RelatedLexemes)
                 .WithOne(dlp => dlp.LexemeInformation)
                 .HasForeignKey(dlp => dlp.LexemeInformationId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             RenameIdentityTables(builder);
         }

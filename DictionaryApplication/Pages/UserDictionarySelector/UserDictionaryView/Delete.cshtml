@@ -21,10 +21,10 @@
                 Translations (@Model.UserDictionary.TranslationLanguage.LangCode)
             </dt>
             <dd class="col-sm-10">
-                @for (int i = 0; i < Model.LexemeInput.Translations.Count; i++)
+                @for (int i = 0; i < Model.LexemeInput.LexemeInformations.Count; i++)
                 {
                     <span>@(i + 1). </span>
-                    @Html.DisplayFor(model => model.LexemeInput.Translations[i])
+                    @Html.DisplayFor(model => model.LexemeInput.LexemeInformations[i].Translation)
                     <br />
                 }
             </dd>

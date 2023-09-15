@@ -1,7 +1,6 @@
 ﻿using DictionaryApplication.Clients;
 using DictionaryApplication.DTOs;
 using DictionaryApplication.Mappers;
-using DictionaryApplication.Models;
 using DictionaryApplication.Models.DbModels;
 
 namespace DictionaryApplication.Services
@@ -17,7 +16,7 @@ namespace DictionaryApplication.Services
             _lingvoInfoClient = lingvoInfoClient;
             _lingvoInfoMapper = lingvoInfoMapper;
         }
-        public async Task<LexemeInput> GetLingvoInfoAsync(string text, string srcLang, string dstLang, bool includeSound)
+        public async Task<LexemeInputDto> GetLingvoInfoAsync(string text, string srcLang, string dstLang, bool includeSound)
         {
             var dto = await _lingvoInfoClient.GetLingvoInfoAsync(text, srcLang, dstLang, includeSound);
             if (dto != null)

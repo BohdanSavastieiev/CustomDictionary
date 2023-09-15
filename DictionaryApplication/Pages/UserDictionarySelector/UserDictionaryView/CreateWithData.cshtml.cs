@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,25 +16,34 @@ using DictionaryApplication.DTOs;
 
 namespace DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView
 {
-    public class CreateModel : UserDictionaryViewPageModel
+    public class CreateWithDataModel : UserDictionaryViewPageModel
     {
         private readonly ILexemeInputRepository _lexemeInputRepository;
-        public CreateModel(
+        private readonly ILingvoInfoService _lingvoInfoService;
+        public CreateWithDataModel(
             ILexemeInputRepository lexemeInputRepository,
+            ILingvoInfoService lingvoInfoService,
             IUserDictionaryRepository userDictionaryRepository) : base(userDictionaryRepository)
         {
             _lexemeInputRepository = lexemeInputRepository;
+            _lingvoInfoService = lingvoInfoService;
         }
 
-        [BindProperty]
         public LexemeInputDto LexemeInput { get; set; } = null!;
 
-        public async Task<IActionResult> OnGetAsync(int userDictionaryId)
+        public async Task<IActionResult> OnGetAsync(int userDictionaryId, string lexeme)
         {
             await LoadUserDictionaryAsync(userDictionaryId);
 
+            var srcLang = UserDictionary.StudiedLanguage.LangCode.Substring(0, 2).ToLowerInvariant();
+            var dstLang = UserDictionary.TranslationLanguage.LangCode.Substring(0, 2).ToLowerInvariant();
+
+            var lexemeInput = await _lingvoInfoService.GetLingvoInfoAsync(lexeme, srcLang, dstLang, false);
+            LexemeInput = lexemeInput;
+            HttpContext.Session.SetObject<LexemeInputDto>("lexemeInput", lexemeInput);
+
             return Page();
-        }        
+        }
 
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
@@ -45,9 +54,15 @@ namespace DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView
                 return Page();
             }
 
-            await _lexemeInputRepository.CreateAsync(userDictionaryId, LexemeInput);
+            var lexemeInput = HttpContext.Session.GetObject<LexemeInputDto>("lexemeInput");
+            if (lexemeInput != null)
+            {
+                await _lexemeInputRepository.CreateAsync(userDictionaryId, lexemeInput);
+                HttpContext.Session.Remove("lexemeInput");
+            }
 
-            return RedirectToPage("Index", new { userDictionaryId = userDictionaryId});
+
+            return RedirectToPage("Index", new { userDictionaryId = userDictionaryId });
         }
     }
 }

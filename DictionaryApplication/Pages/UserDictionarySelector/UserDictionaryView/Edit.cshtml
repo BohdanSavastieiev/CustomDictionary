@@ -30,19 +30,19 @@
                                     <span asp-validation-for="LexemeInput.Lexeme" class="text-danger"></span>
                                 </td>
                                 <td>
-                                    <input type="text" name="LexemeInput.Translations[0]" class="form-control small-input translations" value="@Model.LexemeInput.Translations[0]" required />
+                                    <input type="text" name="LexemeInput.Translations[0]" class="form-control small-input translations" value="@Model.LexemeInput.LexemeInformations[0].Translation" required />
                                     <span class="text-danger field-validation-valid" data-valmsg-for="LexemeInput.Translations[0]" data-valmsg-replace="true"></span>
                                 </td>
                                 <td>
                                     <button type="button" class="big-btn add-translation">Add Translation</button>
                                 </td>
                             </tr>
-                            @for (int i = 1; i < Model.LexemeInput.Translations.Count; i++)
+                            @for (int i = 1; i < Model.LexemeInput.LexemeInformations.Count; i++)
                             {
                                 <tr>
                                     <td></td>
                                     <td>
-                                        <input type="text" name="LexemeInput.Translations[@i]" class="form-control small-input translations" value="@Model.LexemeInput.Translations[i]" required />
+                                        <input type="text" name="LexemeInput.LexemeInformations[@i].Translation" class="form-control small-input translations" value="@Model.LexemeInput.LexemeInformations[i].Translation" required />
                                         <span class="text-danger field-validation-valid" data-valmsg-for="LexemeInput.Translations[@i]" data-valmsg-replace="true"></span>
                                     </td>
                                     <td>
@@ -81,7 +81,7 @@
         });
 
         $(document).ready(function () {
-            var totalTranslations = @Model.LexemeInput.Translations.Count - 1;
+            var totalTranslations = @Model.LexemeInput.LexemeInformations.Count - 1;
 
             var validatorRules = {
                 "LexemeInput.Lexeme": { required: true }

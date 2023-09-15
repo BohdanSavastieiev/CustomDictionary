@@ -17,6 +17,7 @@ namespace DictionaryApplication.Models
         public ICollection<LexemeTranslationPair>? LexemePairs { get; set; }
         public ICollection<LexemeTranslationPair>? TranslationPairs { get; set; }
         public string? Transcription { get; set; }
-        public ICollection<LexemeInformation>? LexemeInformations { get; set; }
+        public ICollection<LexemeInformation> LexemeInformations { get; set; }
+        public ICollection<DbModels.WordForm>? WordForms { get; set; }
     }
 }

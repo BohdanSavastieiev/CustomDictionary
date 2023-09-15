@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using DictionaryApplication.DTOs;
 using DictionaryApplication.Models;
 using DictionaryApplication.Services;
 using Microsoft.AspNetCore.Authentication;

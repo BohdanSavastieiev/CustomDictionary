@@ -9,6 +9,7 @@ using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using DictionaryApplication.Clients;
 using DictionaryApplication.Mappers;
+using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -75,7 +76,15 @@ builder.Services.AddHttpClient("LingvoInfoApi", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["LingvoInfoApiSettings:BaseUrl"]
         ?? throw new InvalidOperationException("BaseUrl for LingvoInfo API is not configured."));
+})
+.ConfigurePrimaryHttpMessageHandler(() =>
+{
+    return new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+    };
 });
+
 builder.Services.AddTransient<LingvoInfoApiClient>();
 
 builder.Services.AddTransient<ILingvoInfoMapper, LingvoInfoToLexemeInputMapper>();
@@ -84,6 +93,14 @@ builder.Services.AddScoped<KnowledgeTestService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddTransient<ILingvoInfoService, LingvoInfoService>();
 
+var mappingConfig = new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new MappingProfile());
+});
+
+IMapper mapper = mappingConfig.CreateMapper();
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 
 

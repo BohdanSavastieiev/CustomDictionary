@@ -1,12 +1,12 @@
-﻿using DictionaryApplication.Models;
+﻿using DictionaryApplication.DTOs;
 
 namespace DictionaryApplication.Repositories
 {
     public interface ILexemeDetailsRepository
     {
-        Task<LexemeDetails?> GetByIdAsync(int id);
-        Task<List<LexemeDetails>> GetAllAsync(params int[] userDictionaryIds);
-        Task<(List<LexemeDetails>, int)> GetAllFilterAsync(int skip, int take, params int[] userDictionaryIds);
-        Task<(List<LexemeDetails>, int)> GetAllFilterAsync(List<LexemeDetails> lexemeDetails, int skip, int take);
+        Task<LexemeDetailsDto?> GetByIdAsync(int id);
+        Task<List<LexemeDetailsDto>> GetAllAsync(params int[] userDictionaryIds);
+        Task<(List<LexemeDetailsDto>, int)> GetAllFilterAsync(int skip, int take, params int[] userDictionaryIds);
+        Task<(List<LexemeDetailsDto>, int)> GetAllFilterAsync(List<LexemeDetailsDto> lexemeDetails, int skip, int take);
     }
 }

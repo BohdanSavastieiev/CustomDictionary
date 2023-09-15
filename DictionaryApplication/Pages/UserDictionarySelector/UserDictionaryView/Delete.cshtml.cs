@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using DictionaryApplication.Data;
 using Microsoft.AspNetCore.Identity;
-using DictionaryApplication.Models;
 using DictionaryApplication.Repositories;
 using Azure;
 using Microsoft.AspNetCore.Authorization;
+using DictionaryApplication.DTOs;
 
 namespace DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView
 {
@@ -23,7 +23,7 @@ namespace DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView
             _lexemeInputRepository = lexemeInputRepository;
         }
 
-        public LexemeInput LexemeInput { get; set; } = null!;
+        public LexemeInputDto LexemeInput { get; set; } = null!;
         public int CurrentPage { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int userDictionaryId, int lexemeId, int pageId)

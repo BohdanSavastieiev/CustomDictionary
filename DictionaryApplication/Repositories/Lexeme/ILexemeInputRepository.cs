@@ -1,14 +1,14 @@
-﻿using DictionaryApplication.Models;
+﻿using DictionaryApplication.DTOs;
 
 namespace DictionaryApplication.Repositories
 {
     public interface ILexemeInputRepository
     {
-        Task CreateAsync(int dictionaryId, LexemeInput lexemeInput);
-        Task UpdateAsync(int lexemeId, LexemeInput lexemeInput);
+        Task CreateAsync(int dictionaryId, LexemeInputDto lexemeInput);
+        Task UpdateAsync(int lexemeId, LexemeInputDto lexemeInput);
         Task DeleteAsync(int lexemeId);
-        Task<LexemeInput?> GetByIdAsync(int lexemeId);
-        Task<List<LexemeInput>> GetAllAsync(params int[] userDictionaryIds);
+        Task<LexemeInputDto?> GetByIdAsync(int lexemeId);
+        Task<List<LexemeInputDto>> GetAllAsync(params int[] userDictionaryIds);
 
     }
 }

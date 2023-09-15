@@ -1,8 +1,8 @@
-﻿using DictionaryApplication.Models;
-using MimeKit.Text;
+﻿using MimeKit.Text;
 using MimeKit;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using DictionaryApplication.DTOs;
 
 namespace DictionaryApplication.Services
 {

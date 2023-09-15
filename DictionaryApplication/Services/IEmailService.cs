@@ -1,4 +1,4 @@
-﻿using DictionaryApplication.Models;
+﻿using DictionaryApplication.DTOs;
 
 namespace DictionaryApplication.Services
 {

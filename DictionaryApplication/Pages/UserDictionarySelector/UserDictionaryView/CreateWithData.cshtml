@@ -1,0 +1,141 @@
+﻿@page
+@model DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView.CreateWithDataModel
+
+@{
+    ViewData["Title"] = "Create Lexeme";
+}
+
+<h1>Create Lexeme</h1>
+
+<hr />
+<div class="container">
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <!-- Lexeme Input -->
+        <div class="form-group">
+            <h3 asp-for="LexemeInput.Lexeme">Lexeme: <strong>@Model.LexemeInput.Lexeme</strong></h3>
+        </div>
+
+        <!-- Transcription -->
+        @if(!string.IsNullOrEmpty(Model.LexemeInput.Transcription))
+        {
+            <div class="form-group">
+                <h4 asp-for="LexemeInput.Lexeme">Transcription: <strong>@Model.LexemeInput.Transcription</strong></h4>
+            </div>
+        }
+
+        <!-- Word Forms -->
+        @if (Model.LexemeInput.WordForms.Any())
+        {
+            <div class="form-group">
+                <h4>Word Forms</h4>
+                <ul id="wordFormsList">
+                    @foreach (var wordForm in Model.LexemeInput.WordForms)
+                    {
+                        <li>@wordForm.Word</li>
+                    }
+                </ul>
+            </div>
+        }
+        
+
+
+        <!-- Lexeme Informations -->
+        <div class="form-group">
+            <h3>Translations</h3>
+            @for (int i = 0; i < Model.LexemeInput.LexemeInformations.Count; i++)
+            {
+                <div class="lexeme-information-block">
+                    <h4><strong>@(i + 1). @Model.LexemeInput.LexemeInformations[i].Translation</strong></h4>
+
+                    @{
+                        if (Model.LexemeInput.LexemeInformations[i].Examples.Any())
+                        {
+                            <div class="examples">
+                                <strong>Examples:</strong>
+                                <ul>
+                                    @for (int j = 0; j < Model.LexemeInput.LexemeInformations[i].Examples.Count; j++)
+                                    {
+                                        <li>
+                                            <strong>@(j + 1).</strong> @Model.LexemeInput.LexemeInformations[i].Examples[j].NativeExample
+                                             @Model.LexemeInput.LexemeInformations[i].Examples[j].TranslatedExample
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+                        if (Model.LexemeInput.LexemeInformations[i].RelatedLexemes.Any())
+                        {
+                            var synonyms = Model.LexemeInput.LexemeInformations[i].RelatedLexemes.Where(x => x.Type == DTOs.RelatedLexemeType.Synonym);
+                            var antonyms = Model.LexemeInput.LexemeInformations[i].RelatedLexemes.Where(x => x.Type == DTOs.RelatedLexemeType.Antonym);
+                            var derivedLexemes = Model.LexemeInput.LexemeInformations[i].RelatedLexemes.Where(x => x.Type == DTOs.RelatedLexemeType.DerivedLexeme);
+
+                            if (synonyms.Any())
+                            {
+                                <h5>Synonyms:</h5>
+                                <ul>
+                                    @foreach (var synonym in synonyms)
+                                    {
+                                        <li>@synonym.Word</li>
+                                    }
+                                </ul>
+                            }
+                            if (antonyms.Any())
+                            {
+                                <h5>Antonyms:</h5>
+                                <ul>
+                                    @foreach (var antonym in antonyms)
+                                    {
+                                        <li>@antonym.Word</li>
+                                    }
+                                </ul>
+                            }
+                            if (derivedLexemes.Any())
+                            {
+                                <h5>Related Lexemes:</h5>
+                                <ul>
+                                    @foreach (var derivedLexeme in derivedLexemes)
+                                    {
+                                        <li>@derivedLexeme.Word</li>
+                                    }
+                                </ul>
+                            }
+                        }
+                    }
+                </div>
+            }
+        </div>
+
+
+
+        <div class="form-group text-center">
+            <input type="submit" value="Save Changes" class="btn btn-primary" />
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Добавление новой Lexeme Information
+        $('#addLexemeInformation').click(function () {
+            var newLexemeInformation = $('<div class="lexeme-information">');
+            newLexemeInformation.append('<input type="text" name="LexemeInput.LexemeInformations[]" class="form-control" placeholder="Translation" />');
+            // Добавьте другие поля для LexemeInformationDto здесь, если необходимо
+            $('#lexemeInformationsContainer').append(newLexemeInformation);
+        });
+
+        // Добавление новой Word Form
+        $('#addWordForm').click(function () {
+            var newWordForm = $('<div class="word-form">');
+            newWordForm.append('<input type="text" name="LexemeInput.WordForms[]" class="form-control" placeholder="Word Form" />');
+            $('#wordFormsContainer').append(newWordForm);
+        });
+
+                        // Добавьте функциональность для удаления элементов, если необходимо
+    </script>
+}
+

@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using DictionaryApplication.Services;
+using DictionaryApplication.DTOs;
 
 namespace DictionaryApplication.Areas.Identity.Pages.Account
 {

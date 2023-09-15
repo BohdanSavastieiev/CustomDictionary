@@ -26,7 +26,7 @@ namespace DictionaryApplication.Services
         }
         public async Task<bool> AreParametersValid(KnowledgeTestParameters testParameters)
         {
-            return testParameters != null 
+            return testParameters != null
                 && testParameters.SelectedDictionaryIds != null
                 && testParameters.SelectedDictionaryIds.Count > 0
                 && await ContainAnyLexemesAsync(testParameters.SelectedDictionaryIds)
@@ -40,16 +40,22 @@ namespace DictionaryApplication.Services
             foreach (var lexemeTestAttempt in lexemeTestAttempts)
             {
                 var translations = lexemeTestAttempt.Translations;
-                var translationsRepresentation = translations.Count > 1
+                var translationsRepresentation = lexemeTestAttempt.Lexeme.LexemeInformations.Count > 1
+                        ? string.Join(Environment.NewLine, lexemeTestAttempt.Lexeme.LexemeInformations.Select(l => l.Translation).Select((s, i) => $"{i + 1}. {s}"))
+                        : lexemeTestAttempt.Lexeme.LexemeInformations.FirstOrDefault()?.Translation;
+                if (translationsRepresentation == null)
+                {
+                    translationsRepresentation = translations.Count > 1
                         ? string.Join(Environment.NewLine, translations.Select(l => l.Word).Select((s, i) => $"{i + 1}. {s}"))
                         : translations.First().Word;
+                }
 
                 if (testParameters.IsUserTranslatesStudiedLanguage)
                 {
                     lexemeTestAttempt.LexemeTestRepresentation = lexemeTestAttempt.Lexeme.Word;
                     lexemeTestAttempt.CorrectAnswerRepresentation = translationsRepresentation;
                 }
-                else 
+                else
                 {
                     lexemeTestAttempt.LexemeTestRepresentation = translationsRepresentation;
                     lexemeTestAttempt.CorrectAnswerRepresentation = lexemeTestAttempt.Lexeme.Word;
