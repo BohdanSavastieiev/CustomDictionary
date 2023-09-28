@@ -13,7 +13,6 @@ namespace DictionaryApplication.Data
         public new DbSet<ApplicationUser> Users { get; set; }
         public DbSet<UserDictionary> UserDictionaries { get; set; }
         public DbSet<Lexeme> Lexemes { get; set; }
-        public DbSet<LexemeTranslationPair> LexemeTranslationPairs { get; set; }
         public DbSet<LexemeInformation> LexemeInformations { get; set; }
         public DbSet<UsageExample> UsageExamples { get; set; }
         public DbSet<RelatedLexeme> RelatedLexemes { get; set; }
@@ -23,6 +22,7 @@ namespace DictionaryApplication.Data
             : base(options)
         {
         }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -57,11 +57,6 @@ namespace DictionaryApplication.Data
             builder.Entity<UserDictionary>()
                 .ToTable(t => t.HasCheckConstraint("CHK_Dictionary_Languages_Not_Equal", "StudiedLangId <> TranslationLangId"))
                 .HasIndex(e => new { e.StudiedLangId, e.TranslationLangId });
-
-            builder.Entity<Language>()
-                .HasMany(lg => lg.Lexemes)
-                .WithOne(l => l.LexemeLanguage)
-                .HasForeignKey(l => l.LangId);
 
             // User configuring
 
@@ -102,10 +97,6 @@ namespace DictionaryApplication.Data
                 .IsRequired();
 
             builder.Entity<Lexeme>()
-                .Property(l => l.Description)
-                .HasMaxLength(1000);
-
-            builder.Entity<Lexeme>()
                 .Property(l => l.Transcription)
                 .HasMaxLength(100);
 
@@ -116,28 +107,6 @@ namespace DictionaryApplication.Data
             builder.Entity<Lexeme>()
                 .Property(l => l.CorrectTestAttempts)
                 .HasDefaultValue(0);
-
-
-            // LexemeTranslationPair configuring
-            builder.Entity<LexemeTranslationPair>()
-                .HasKey(lp => new { lp.LexemeId, lp.TranslationId });
-
-            builder.Entity<Lexeme>()
-                .HasMany(ud => ud.LexemePairs)
-                .WithOne(dlp => dlp.Lexeme)
-                .HasForeignKey(dlp => dlp.LexemeId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.Entity<Lexeme>()
-                .HasMany(ud => ud.TranslationPairs)
-                .WithOne(dlp => dlp.Translation)
-                .HasForeignKey(dlp => dlp.TranslationId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<LexemeTranslationPair>()
-                .ToTable(t => t.HasCheckConstraint("CHK_Dictionary_Languages_Not_Equal", "LexemeId <> TranslationId"))
-                .HasIndex(e => new { e.LexemeId, e.TranslationId })
-                .IsUnique();
 
             // LexemeInformation configuring
             builder.Entity<Lexeme>()
@@ -164,7 +133,6 @@ namespace DictionaryApplication.Data
         protected void RenameIdentityTables(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.HasDefaultSchema("Dict");
             builder.Entity<ApplicationUser>(entity =>
             {
                 entity.ToTable(name: "Users");

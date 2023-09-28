@@ -10,35 +10,40 @@ using Azure.Security.KeyVault.Secrets;
 using DictionaryApplication.Clients;
 using DictionaryApplication.Mappers;
 using AutoMapper;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-var keyVaultEndpoint = "https://dictionarykeyvault.vault.azure.net/";
-var secretClient = new SecretClient(new Uri(keyVaultEndpoint), new DefaultAzureCredential());
-var emailHostSecret = secretClient.GetSecret("EmailHost");
-var emailUsernameSecret = secretClient.GetSecret("EmailUsername");
-var emailPasswordSecret = secretClient.GetSecret("EmailPassword");
-builder.Configuration["EmailHost"] = emailHostSecret.Value.Value;
-builder.Configuration["EmailUsername"] = emailUsernameSecret.Value.Value;
-builder.Configuration["EmailPassword"] = emailPasswordSecret.Value.Value;
+//var keyVaultEndpoint = "https://dictionarykeyvault.vault.azure.net/";
+//var secretClient = new SecretClient(new Uri(keyVaultEndpoint), new DefaultAzureCredential());
+//var emailHostSecret = secretClient.GetSecret("EmailHost");
+//var emailUsernameSecret = secretClient.GetSecret("EmailUsername");
+//var emailPasswordSecret = secretClient.GetSecret("EmailPassword");
+//builder.Configuration["EmailHost"] = emailHostSecret.Value.Value;
+//builder.Configuration["EmailUsername"] = emailUsernameSecret.Value.Value;
+//builder.Configuration["EmailPassword"] = emailPasswordSecret.Value.Value;
 
-var connectionString = secretClient.GetSecret("DefaultConnection").Value.Value
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
-//?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+//var connectionString = secretClient.GetSecret("DefaultConnection").Value.Value
+//    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' was not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString, 
-        sqlServerOptionsAction: sqlOptions =>
-        {
-             sqlOptions.EnableRetryOnFailure(
-                maxRetryCount: 10,
-                maxRetryDelay: TimeSpan.FromSeconds(30),
-                errorNumbersToAdd: null);
-        }));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+    options.UseSqlite(connectionString));
+
+
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//    options.UseSqlServer(connectionString, 
+//        sqlServerOptionsAction: sqlOptions =>
+//        {
+//             sqlOptions.EnableRetryOnFailure(
+//                maxRetryCount: 10,
+//                maxRetryDelay: TimeSpan.FromSeconds(30),
+//                errorNumbersToAdd: null);
+//        }));
+//builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddTransient(typeof(IDbRepository<>), typeof(DbRepository<>));
 builder.Services.AddScoped<IUserDictionaryRepository, UserDictionaryRepository>();
@@ -118,7 +123,9 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApplicationDbContext>();
-    SeedData.Initialize(context);
+    var lingvoInfoService = services.GetRequiredService<ILingvoInfoService>();
+    var lexemeInputRepository= services.GetRequiredService<ILexemeInputRepository>();
+    await SeedData.Initialize(context, lingvoInfoService, lexemeInputRepository);
 }
 
 // Configure the HTTP request pipeline.

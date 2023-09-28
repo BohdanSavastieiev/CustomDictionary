@@ -10,6 +10,7 @@ using DictionaryApplication.Data;
 using DictionaryApplication.Repositories;
 using DictionaryApplication.DTOs;
 using DictionaryApplication.Extensions;
+using Newtonsoft.Json;
 
 namespace DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView
 {
@@ -17,15 +18,14 @@ namespace DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView
     {
         private readonly ILexemeInputRepository _lexemeInputRepository;
 
-        public EditModel(ILexemeInputRepository lexemeInputRepository,
+        public EditModel(
+            ILexemeInputRepository lexemeInputRepository,
             IUserDictionaryRepository userDictionaryRepository) : base(userDictionaryRepository)
         {
             _lexemeInputRepository = lexemeInputRepository;
         }
 
-        [BindProperty]
         public LexemeInputDto LexemeInput { get; set; } = null!;
-
 
         public async Task<IActionResult> OnGetAsync(int userDictionaryId, int lexemeId)
         {
@@ -38,24 +38,21 @@ namespace DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView
             else
             {
                 LexemeInput = lexemeInput;
-                HttpContext.Session.SetObject<LexemeInputDto>("lexemeInput", lexemeInput);
-
             }
 
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync(int userDictionaryId, int lexemeId)
+        public async Task<IActionResult> OnPostAsync(int userDictionaryId, int lexemeId, string lexemeInputSerialized)
         {
+            var lexemeInput = JsonConvert.DeserializeObject<LexemeInputDto>(lexemeInputSerialized);
 
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || lexemeInput == null || !lexemeInput.LexemeInformations.Any())
             {
-                return Page();
+                return RedirectToPage("./Index", new { userDictionaryId = userDictionaryId });
             }
 
-            await _lexemeInputRepository.UpdateAsync(lexemeId, LexemeInput);
+            await _lexemeInputRepository.UpdateAsync(lexemeId, lexemeInput);
 
             return RedirectToPage("./Index", new { userDictionaryId = userDictionaryId });
         }

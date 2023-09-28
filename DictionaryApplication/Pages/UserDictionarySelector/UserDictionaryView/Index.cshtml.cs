@@ -71,8 +71,7 @@ namespace DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView
             {
                 searchString = searchString.ToLower();
                 LexemeDetailsList.LexemeDetails = LexemeDetailsList.LexemeDetails
-                    .Where(s => s.Lexeme.Word.ToLower().Contains(searchString)
-                        || s.TranslationsRepresentation.ToLower().Contains(searchString))
+                    .Where(s => s.Lexeme.LexemeInformations.Any(t => t.Translation.Contains(searchString)))
                     .ToList();
             }
 

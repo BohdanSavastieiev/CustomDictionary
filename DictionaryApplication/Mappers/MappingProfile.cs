@@ -17,7 +17,7 @@ namespace DictionaryApplication.Mappers
                  Examples = t.Examples.Select(e => new UsageExampleDto { NativeExample = e.NativeExample, TranslatedExample = e.TranslatedExample }).ToList(),
                  RelatedLexemes = t.Synonyms.Select(s => new RelatedLexemeDto { Word = s.Text, Type = RelatedLexemeType.Synonym })
                      .Concat(t.Antonyms.Select(a => new RelatedLexemeDto { Word = a.Text, Type = RelatedLexemeType.Antonym }))
-                     .Concat(t.DerivedLexemes.Select(d => new RelatedLexemeDto { Word = d.Text, Type = RelatedLexemeType.DerivedLexeme }))
+                     .Concat(t.DerivedLexemes.Select(d => new RelatedLexemeDto { Word = d.Text, Type = RelatedLexemeType.Derivative }))
                      .ToList()
              }).ToList()));
         }

@@ -1,11 +1,17 @@
 ﻿using DictionaryApplication.Data;
 using DictionaryApplication.Models;
+using DictionaryApplication.Repositories;
+using DictionaryApplication.Services;
+using Newtonsoft.Json;
 
 namespace DictionaryApplication.Data
 {
     public static class SeedData
     {
-        public static void Initialize(ApplicationDbContext context)
+        public async static Task Initialize(
+            ApplicationDbContext context,
+            ILingvoInfoService lingvoInfoService,
+            ILexemeInputRepository lexemeInputRepository)
         {
             if (!context.Languages.Any())
             {

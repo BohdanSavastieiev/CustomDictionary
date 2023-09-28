@@ -16,9 +16,10 @@ namespace DictionaryApplication.Repositories
         {
             var result = new List<LexemeTestAttempt>();
             List<int> studiedLexemeIds = await _context.Lexemes
-                .Where(x => userDictionaryIds.Contains(x.DictionaryId)
-                    && (x.LexemePairs.Any() || x.LexemeInformations.Any()))
-                .Select(x => x.Id).ToListAsync();
+                .Where(x => userDictionaryIds.Contains(x.DictionaryId))
+                .Select(x => x.Id)
+                .ToListAsync();
+
             foreach (var lexemeId in studiedLexemeIds)
             {
                 var lexeme = await GetByIdAsync(lexemeId);
@@ -39,16 +40,9 @@ namespace DictionaryApplication.Repositories
                 .FirstOrDefaultAsync(x => x.Id == lexemeId)
                 ?? throw new ArgumentNullException(nameof(lexemeId), "The lexeme for update was not found.");
 
-            var translations = await _context.Lexemes.Where(x =>
-                        _context.LexemeTranslationPairs
-                            .Where(y => y.LexemeId == lexeme.Id)
-                            .Select(y => y.TranslationId).Contains(x.Id))
-                        .ToListAsync();
-
             var result = new LexemeTestAttempt
             {
-                Lexeme = lexeme,
-                Translations = translations,
+                Lexeme = lexeme
             };
 
             return result;

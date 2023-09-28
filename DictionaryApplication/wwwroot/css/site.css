@@ -19,7 +19,7 @@ body {
     background-color: #F9F5F0;
     color: #5C524B;
     padding-bottom: 50px;
-    word-break: break-all;
+    word-wrap: break-word;
     hyphens: auto;
 }
 
@@ -172,6 +172,11 @@ a {
             background-color: #5C524B;
             color: #F9F5F0;
         }
+    .table .table-row-toggled {
+        background-color: #5C524B;
+        color: #F9F5F0;
+    }
+
 
 
     .table thead {
@@ -422,7 +427,7 @@ a {
     }
 
     #lexeme-table th:nth-child(2) {
-        width: 25%;
+        width: 20%;
         text-align: justify;
     }
 
@@ -431,11 +436,11 @@ a {
     }
 
     #lexeme-table th:nth-child(3) {
-        width: 25%;
+        width: 45%;
     }
 
     #lexeme-table th:nth-child(4) {
-        width: 18%;
+        width: 15%;
     }
 
     #lexeme-table th:nth-child(5) {
@@ -590,12 +595,18 @@ dl.row dd {
 }
 
 .description-box {
-    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Выравнивание по центру по горизонтали */
 }
 
+.description-row {
+    background-color: #F5F5DC;
+}
 
-
-
+.description-row td{
+    padding: 0;
+}
 
 
 .add-translation {
@@ -854,6 +865,7 @@ header {
     display: inline-flex;
     margin-right: 20px;
 }
+
 .pagination-input-field-container {
     flex: 1;
     margin-right: 5px;
@@ -873,3 +885,200 @@ header {
     .pagination-submit-button:hover {
         background: #5C524B;
     }
+
+
+.lexeme-info-container {
+    display: flex; /* Use flexbox */
+    flex-direction: column; /* Arrange children vertically */
+    align-items: center; /* Center children horizontally */
+    text-align: center; /* Center text horizontally */
+    /* Add any other styles you need */
+}
+
+.lexeme-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Align items at the top within each block */
+    text-align: left;
+    margin-top: 20px;
+    width: 40%;
+
+}
+
+.left-block {
+    flex: 1; /* Take up equal space in the left block */
+}
+
+.right-block {
+    flex: 1; /* Take up equal space in the right block */
+}
+
+#lexeme {
+    text-align: left;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr 1fr;
+    gap: 0;
+    min-width: 100%;
+    border: 0;
+    outline: 0;
+    background-color: #F5F5DC;
+}
+
+    .grid-container > div {
+
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+.lexeme-info-section {
+    margin-top: 20px;
+    width: 100%;
+    border: 0;
+}
+
+.lexeme-information-element-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 40px 5px 40px;
+    background-color: #FFFACD;
+}
+
+.lexeme-information-element-name {
+    text-align: center;
+    flex-grow: 1; /* Allow the <h5> to expand and center itself */
+}
+
+.translation {
+    text-align: center;
+    flex-grow: 1;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 5px;
+
+}
+
+    .translation > span {
+        padding: 5px;
+    }
+
+.related-lexemes {
+    display: contents; /* Изменено с grid на contents */
+}
+
+/* Стили для каждого блока внутри контейнера */
+.lexeme-info {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    position: relative; /* Make the .lexeme-info block a positioning context */
+}
+
+/* Убрать внутренний отступ для внутренних блоков */
+.related-lexemes > div,
+.examples {
+    margin: 0;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+/* Убрать верхнюю границу для первого блока, чтобы избежать двойной границы */
+.lexeme-info > div:first-child {
+    border-top: none;
+}
+
+/* Убрать верхнюю границу для первого блока в .related-lexemes, чтобы избежать двойной границы */
+.related-lexemes > div:first-child {
+    border: none;
+}
+.small-input {
+    width: 350px; /* Установите желаемую ширину */
+    margin: 20px auto 20px;
+}
+input.editable {
+    width: 100%; /* Занимает всю доступную ширину */
+    max-width: 100%; /* Ограничивает максимальную ширину */
+    box-sizing: border-box; /* Убедитесь, что padding и border включены в общий размер */
+    font-size: inherit; /* Унаследовать размер шрифта от родительского элемента */
+    font-family: inherit; /* Унаследовать семейство шрифтов от родительского элемента */
+    background-color: #f0f0f0; /* Цвет фона для инпута */
+    word-wrap: break-word; /* Перенос слов на новую строку, если они не умещаются */
+    overflow-wrap: break-word; /* Альтернатива для word-wrap */
+    white-space: pre-wrap; /* Сохраняет пробелы и переносы строк, позволяя тексту переноситься на новую строку */
+    resize: none; /* Отключает возможность изменения размера пользователем */
+    border: 1px solid #ccc; /* Добавляет границу вокруг textarea */
+}
+
+.lexeme-info-btn {
+    margin: 5px 5px 5px 5px;
+    background-color: #A52A2A;
+    color: white;
+    border-radius: 50%;
+    border: 0;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex; /* Разрешить элементу использовать flexbox */
+    justify-content: center; /* Выравнивание по центру по горизонтали */
+    align-items: center; /* Выравнивание по центру по вертикали */
+}
+
+.translation-block {
+    position: relative; /* Для родительского блока translation-block */
+}
+
+.delete-lexeme-info-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.examples {
+    position: relative; /* Для родительского блока examples */
+}
+.synonyms {
+    position: relative; /* Для родительского блока examples */
+}
+.antonyms {
+    position: relative; /* Для родительского блока examples */
+}
+.derivatives {
+    position: relative; /* Для родительского блока examples */
+}
+
+
+.delete-examples-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.delete-synonyms-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.delete-antonyms-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.delete-derivatives-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.translation, .lexeme-info-h5 {
+    /*margin: 0 40px 5px 40px;*/
+}
+
+
+.lexeme-info-list{
+    text-align: left;
+}
+
+#create-button{
+    margin-top: 20px;
+}

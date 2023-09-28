@@ -27,7 +27,8 @@ namespace DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView
         }
 
         [BindProperty]
-        public LexemeInputDto LexemeInput { get; set; } = null!;
+        public string Lexeme { get; set; } = null!;
+        public bool IsLexemeValid => !string.IsNullOrWhiteSpace(Lexeme);
 
         public async Task<IActionResult> OnGetAsync(int userDictionaryId)
         {
@@ -45,9 +46,7 @@ namespace DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView
                 return Page();
             }
 
-            await _lexemeInputRepository.CreateAsync(userDictionaryId, LexemeInput);
-
-            return RedirectToPage("Index", new { userDictionaryId = userDictionaryId});
+            return RedirectToPage("ConfirmCreate", new { userDictionaryId = userDictionaryId, lexeme = Lexeme });
         }
     }
 }

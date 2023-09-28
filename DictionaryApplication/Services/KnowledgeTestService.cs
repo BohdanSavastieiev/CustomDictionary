@@ -3,7 +3,9 @@ using DictionaryApplication.Models;
 using DictionaryApplication.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using NuGet.Packaging.Signing;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace DictionaryApplication.Services
 {
@@ -39,16 +41,8 @@ namespace DictionaryApplication.Services
 
             foreach (var lexemeTestAttempt in lexemeTestAttempts)
             {
-                var translations = lexemeTestAttempt.Translations;
-                var translationsRepresentation = lexemeTestAttempt.Lexeme.LexemeInformations.Count > 1
-                        ? string.Join(Environment.NewLine, lexemeTestAttempt.Lexeme.LexemeInformations.Select(l => l.Translation).Select((s, i) => $"{i + 1}. {s}"))
-                        : lexemeTestAttempt.Lexeme.LexemeInformations.FirstOrDefault()?.Translation;
-                if (translationsRepresentation == null)
-                {
-                    translationsRepresentation = translations.Count > 1
-                        ? string.Join(Environment.NewLine, translations.Select(l => l.Word).Select((s, i) => $"{i + 1}. {s}"))
-                        : translations.First().Word;
-                }
+                var translationsRepresentation = string.Join(Environment.NewLine, 
+                    lexemeTestAttempt.Lexeme.LexemeInformations.Select(l => l.Translation).Select(s => $"• {s}"));
 
                 if (testParameters.IsUserTranslatesStudiedLanguage)
                 {
@@ -83,7 +77,7 @@ namespace DictionaryApplication.Services
                     return lexemeTestAttempts;
             }
         }
-        public void CheckAnswers(ref List<LexemeTestAttempt> lexemes, KnowledgeTestParameters knowledgeTestParameters)
+        public void CheckAnswers(List<LexemeTestAttempt> lexemes, KnowledgeTestParameters knowledgeTestParameters)
         {
             foreach (var lexeme in lexemes)
             {
@@ -92,28 +86,32 @@ namespace DictionaryApplication.Services
                     continue;
                 }
 
+                string cleanedLine = Regex.Replace(lexeme.LexemeTestRepresentation, @"\d+\.", "").Trim();
+                string[] correctTranslationsIfStudiedLanguage = lexeme.Lexeme.LexemeInformations
+                    .SelectMany(x => Regex.Split(x.Translation, @"[;,]\s*")).ToArray();
+
+                var correctTranslationsIfTranslatedLanguage = lexeme.Lexeme.WordForms.Any()
+                        ? lexeme.Lexeme.WordForms.Select(x => x.Word).ToArray()
+                        : new[] { lexeme.Lexeme.Word };
+
                 lexeme.IsCorrectAnswer = knowledgeTestParameters.IsUserTranslatesStudiedLanguage
-                    ? IsCorrectAnswer(lexeme.TestAnswer, lexeme.Translations.Select(t => t.Word).ToArray())
-                    : IsCorrectAnswer(lexeme.TestAnswer, lexeme.Lexeme.Word);
+                ? IsCorrectAnswer(lexeme.TestAnswer, correctTranslationsIfStudiedLanguage)
+                : IsCorrectAnswer(lexeme.TestAnswer, correctTranslationsIfTranslatedLanguage);
             }
         }
         public bool IsCorrectAnswer(string userAnswer, params string[] correctTranslations)
         {
-            userAnswer = userAnswer.ToLower().Trim().Replace(",", "");
+            var userAnswers = userAnswer.ToLower().Trim().Split(", ");
 
             for (int i = 0; i < correctTranslations.Length; i++)
             {
-                var innerTranslations = correctTranslations[i].Split(',');
-                foreach (var transl in innerTranslations)
+                foreach (var answer in userAnswers)
                 {
-                    var tr = transl.ToLower().Trim().Replace(",", "");
-
-                    if (tr.Equals(userAnswer, StringComparison.OrdinalIgnoreCase))
+                    if (correctTranslations[i].Equals(answer, StringComparison.OrdinalIgnoreCase))
                     {
                         return true;
                     }
-
-                    var levensteinDistance = LevenshteinDistance(tr, userAnswer);
+                    var levensteinDistance = LevenshteinDistance(correctTranslations[i], answer);
                     if (levensteinDistance <= 1)
                     {
                         return true;

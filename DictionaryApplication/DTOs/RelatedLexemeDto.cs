@@ -12,6 +12,6 @@ namespace DictionaryApplication.DTOs
     {
         Synonym,
         Antonym,
-        DerivedLexeme
+        Derivative
     }
 }

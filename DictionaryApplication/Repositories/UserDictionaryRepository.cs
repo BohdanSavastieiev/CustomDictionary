@@ -92,10 +92,10 @@ namespace DictionaryApplication.Repositories
 
         public async Task<int> GetLexemesAmount(int id)
         {
-            var dict = await GetByIdAsync(id);
-            return dict == null || dict.Lexemes == null 
+            var dictionary = await GetByIdAsync(id);
+            return dictionary == null || dictionary.Lexemes == null 
                 ? 0 
-                : dict.Lexemes.Count(l => l.LangId == dict.StudiedLangId);
+                : dictionary.Lexemes.Count(l => l.Id == id);
         }
     }
 }

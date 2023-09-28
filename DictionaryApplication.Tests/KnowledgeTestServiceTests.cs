@@ -59,7 +59,7 @@ namespace DictionaryApplication.Tests
             var knowledgeTestService = new KnowledgeTestService(lexemeTestAttemptRepositoryMock.Object);
 
             // Act
-            knowledgeTestService.CheckAnswers(ref correctTestAttempts, knowledgeTestParameters);
+            knowledgeTestService.CheckAnswers(correctTestAttempts, knowledgeTestParameters);
             var expected = true;
 
             // Assert
@@ -78,7 +78,7 @@ namespace DictionaryApplication.Tests
             var knowledgeTestService = new KnowledgeTestService(lexemeTestAttemptRepositoryMock.Object);
 
             // Act
-            knowledgeTestService.CheckAnswers(ref wrongTestAttempts, knowledgeTestParameters);
+            knowledgeTestService.CheckAnswers(wrongTestAttempts, knowledgeTestParameters);
             var expected = false;
 
             // Assert
@@ -126,21 +126,18 @@ namespace DictionaryApplication.Tests
             {
                 TestAnswer = "Apple",
                 Lexeme = new Lexeme{ Word = "Apple", TotalTestAttempts = 2, CorrectTestAttempts = 1 },
-                Translations = new List<Lexeme> { new Lexeme { Word = "Яблоко" } },
                 IsCorrectAnswer = true
             },
             new LexemeTestAttempt
             {
                 TestAnswer = "Dog",
                 Lexeme = new Lexeme{ Word = "Dog", TotalTestAttempts = 2, CorrectTestAttempts = 1  },
-                Translations = new List<Lexeme> { new Lexeme { Word = "Собака" } },
                 IsCorrectAnswer = true
             },
             new LexemeTestAttempt
             {
                 TestAnswer = "Love",
                 Lexeme = new Lexeme{ Word = "Break", TotalTestAttempts = 2, CorrectTestAttempts = 1  },
-                Translations = new List<Lexeme> { new Lexeme { Word = "Раскол" } },
                 IsCorrectAnswer = false
             },
         };
@@ -151,19 +148,16 @@ namespace DictionaryApplication.Tests
             {
                 TestAnswer = "Apple",
                 Lexeme = new Lexeme{ Word = "Apple" },
-                Translations = new List<Lexeme> { new Lexeme { Word = "Яблоко" } }
             },
             new LexemeTestAttempt
             {
                 TestAnswer = "Dog",
                 Lexeme = new Lexeme{ Word = "Dog" },
-                Translations = new List<Lexeme> { new Lexeme { Word = "Собака" } }
             },
             new LexemeTestAttempt
             {
                 TestAnswer = "Break",
                 Lexeme = new Lexeme{ Word = "Break" },
-                Translations = new List<Lexeme> { new Lexeme { Word = "Раскол" }, new Lexeme { Word = "Перерыв"} }
             },        
         };
 
@@ -173,19 +167,16 @@ namespace DictionaryApplication.Tests
             {
                 TestAnswer = "Apple",
                 Lexeme = new Lexeme{ Word = "Dog" },
-                Translations = new List<Lexeme> { new Lexeme { Word = "Собака" } }
             },
             new LexemeTestAttempt
             {
                 TestAnswer = "Break",
                 Lexeme = new Lexeme{ Word = "Apple" },
-                Translations = new List<Lexeme> { new Lexeme { Word = "Яблоко" } }
             },
             new LexemeTestAttempt
             {
                 TestAnswer = "Love",
                 Lexeme = new Lexeme{ Word = "Easy" },
-                Translations = new List<Lexeme> { new Lexeme { Word = "Легко" } }
             },
         };
 

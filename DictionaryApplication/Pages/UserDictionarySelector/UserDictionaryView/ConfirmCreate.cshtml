@@ -1,11 +1,8 @@
 ﻿@page
-@model DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView.EditModel
-
+@model DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView.ConfirmCreateModel
 @{
-    ViewData["Title"] = "Edit Lexeme";
+    ViewData["Title"] = "Confirm Lexeme Creation";
 }
-
-<h1>Edit lexeme</h1>
 
 <form method="post" class="lexeme-info-container">
     <input type="hidden" name="userDictionaryId" value="@Model.UserDictionary.Id" />
@@ -48,7 +45,7 @@
                 </div>
                 @if (lexemeInfo.Examples.Any() || lexemeInfo.RelatedLexemes.Any())
                 {
-                    <div class="grid-container">
+                    <div class="grid-container left-right-borders">
 
                         <div class="examples ">
                             @if (lexemeInfo.Examples.Any())
@@ -139,7 +136,7 @@
             </div>
         }
         <div>
-            <input type="submit" value="Save Changes" id="create-button" class="big-btn" />
+            <input type="submit" value="Create" id="create-button" class="big-btn" />
         </div>
     </div>
 
@@ -205,9 +202,11 @@
         function checkLexemeInfoElements() {
             if ($('.lexeme-info').length === 0) {
                 var userDictionaryId = '@Model.UserDictionary.Id';
-                window.location.href = '/UserDictionarySelector/UserDictionaryView/Index?userDictionaryId=' + userDictionaryId;
+                window.location.href = '/UserDictionarySelector/UserDictionaryView/Create?userDictionaryId=' + userDictionaryId;
             }
         }
+
+
 
 
         $(document).on('click', '.delete-lexeme-info-button', function () {

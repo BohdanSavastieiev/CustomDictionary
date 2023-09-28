@@ -24,22 +24,31 @@ namespace DictionaryApplication.Repositories
         }
         public async Task<LexemeDetailsDto?> GetByIdAsync(int id)
         {
-            var lexeme = await _context.Lexemes.FirstOrDefaultAsync(x => x.Id == id);
+            var lexeme = await _context.Lexemes
+                .Include(x => x.WordForms)
+                .Include(x => x.LexemeInformations)
+                    .ThenInclude(x => x.Examples)
+                .Include(x => x.LexemeInformations)
+                    .ThenInclude(x => x.RelatedLexemes)
+                .FirstOrDefaultAsync(x => x.Id == id);
             CheckLexeme(lexeme);
 
-            var result = new LexemeDetailsDto(_context, lexeme.Id);
+            var result = new LexemeDetailsDto(lexeme);
             return result;
         }
 
         public async Task<List<LexemeDetailsDto>> GetAllAsync(params int[] userDictionaryIds)
         {
-            List<int> studiedLexemeIds = await _context.Lexemes.Where(x => userDictionaryIds.Contains(x.DictionaryId)
-                && (x.LexemePairs != null && x.LexemePairs.Count > 0 || x.LexemeInformations.Any()))
+            List<int> studiedLexemeIds = await _context.Lexemes
+                .Where(x => userDictionaryIds.Contains(x.DictionaryId)
+                    && x.LexemeInformations.Any())
                 .Select(x => x.Id).ToListAsync();
+
             var result = new List<LexemeDetailsDto>();
             foreach (var id in studiedLexemeIds)
             {
-                result.Add(new LexemeDetailsDto(_context, id));
+                var lexemeDetails = await GetByIdAsync(id);
+                result.Add(lexemeDetails);
             }
             return result;
         }

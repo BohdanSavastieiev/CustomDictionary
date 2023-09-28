@@ -33,7 +33,7 @@ namespace DictionaryApplication.Pages.KnowledgeTest
                 return RedirectToPage("KnowledgeTestStart");
             }
 
-            _knowledgeTestService.CheckAnswers(ref lexemeTestAttempts, knowledgeTestParameters);
+            _knowledgeTestService.CheckAnswers(lexemeTestAttempts, knowledgeTestParameters);
             HttpContext.Session.SetList("lexemeTestAttempts", lexemeTestAttempts);
 
             lexemeTestAttempts = lexemeTestAttempts.Where(ta => !string.IsNullOrEmpty(ta.TestAnswer)).ToList();

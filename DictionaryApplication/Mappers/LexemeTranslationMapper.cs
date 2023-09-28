@@ -29,16 +29,16 @@ namespace DictionaryApplication.Mappers
                 .ThenByDescending(li => li.RelatedLexemes.Count)
                 .ToList();
 
-            // Взять первые 3 элемента
-            lexemeInputDto.LexemeInformations = sortedLexemeInformations.Take(7).ToList();
+            // Взять первые 4 элемента
+            lexemeInputDto.LexemeInformations = sortedLexemeInformations.ToList();
 
             foreach (var lexemeInformation in lexemeInputDto.LexemeInformations)
             {
-                lexemeInformation.Examples = lexemeInformation.Examples.Take(5).ToList();
+                lexemeInformation.Examples = lexemeInformation.Examples.ToList();
 
                 lexemeInformation.RelatedLexemes = lexemeInformation.RelatedLexemes
                     .GroupBy(rl => rl.Type)
-                    .SelectMany(group => group.Take(5))
+                    .SelectMany(group => group)
                     .ToList();
             }
 

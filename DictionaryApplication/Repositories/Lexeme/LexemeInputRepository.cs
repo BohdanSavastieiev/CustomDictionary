@@ -14,23 +14,16 @@ namespace DictionaryApplication.Repositories
         {
             _context = context;
         }
-        private static void CheckEntity(object? entity)
-        {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-        }
+
         public async Task CreateAsync(int dictionaryId, LexemeInputDto lexemeInput)
         {
-            var userDictionary = await _context.UserDictionaries.FirstOrDefaultAsync(x => x.Id == dictionaryId);
-            CheckEntity(userDictionary);
+            var userDictionary = await _context.UserDictionaries.FirstOrDefaultAsync(x => x.Id == dictionaryId)
+                ?? throw new ArgumentNullException(nameof(dictionaryId), "The dictionary for update was not found.");
+
             var lexeme = new Lexeme
             {
                 DictionaryId = dictionaryId,
-                LangId = userDictionary.StudiedLangId,
                 Word = lexemeInput.Lexeme,
-                Description = lexemeInput.Description,
                 Transcription = lexemeInput.Transcription
             };
             await _context.Lexemes.AddAsync(lexeme);
@@ -86,18 +79,13 @@ namespace DictionaryApplication.Repositories
         public async Task UpdateAsync(int lexemeId, LexemeInputDto lexemeInput)
         {
             var lexeme = await _context.Lexemes.FirstOrDefaultAsync(x => x.Id == lexemeId)
-        ?? throw new ArgumentNullException(nameof(lexemeId), "The lexeme for update was not found.");
+                ?? throw new ArgumentNullException(nameof(lexemeId), "The lexeme for update was not found.");
 
             lexeme.Word = lexemeInput.Lexeme;
-            lexeme.Description = lexemeInput.Description;
 
-            var oldTranslations = _context.LexemeTranslationPairs.Where(x => x.LexemeId == lexemeId).Select(x => x.Translation);
-            _context.Lexemes.RemoveRange(oldTranslations);
-            var oldPairs = _context.LexemeTranslationPairs.Where(x => x.LexemeId == lexemeId);
-            _context.LexemeTranslationPairs.RemoveRange(oldPairs);
+            var userDictionary = await _context.UserDictionaries.FirstOrDefaultAsync(x => x.Id == lexeme.DictionaryId)
+                ?? throw new ArgumentNullException(nameof(lexemeId), "The dictionary for update was not found.");
 
-            var userDictionary = await _context.UserDictionaries.FirstOrDefaultAsync(x => x.Id == lexeme.DictionaryId);
-            CheckEntity(userDictionary);
 
             // Удаление старых форм слова
             var oldWordForms = _context.WordForms.Where(x => x.LexemeId == lexemeId);
@@ -159,13 +147,8 @@ namespace DictionaryApplication.Repositories
 
         public async Task DeleteAsync(int lexemeId)
         {
-            var lexeme = await _context.Lexemes.FirstOrDefaultAsync(x => x.Id == lexemeId);
-            CheckEntity(lexeme);
-
-            var translations = await _context.LexemeTranslationPairs.Where(x => x.LexemeId == lexemeId).Select(x => x.Translation).ToListAsync();
-            _context.Lexemes.RemoveRange(translations);
-            var pairs = _context.LexemeTranslationPairs.Where(x => x.LexemeId == lexemeId);
-            _context.LexemeTranslationPairs.RemoveRange(pairs);
+            var lexeme = await _context.Lexemes.FirstOrDefaultAsync(x => x.Id == lexemeId)
+                ?? throw new ArgumentNullException(nameof(lexemeId), "The lexeme was not found.");
 
             // Удаление форм слова
             var wordForms = _context.WordForms.Where(x => x.LexemeId == lexemeId);
@@ -182,14 +165,8 @@ namespace DictionaryApplication.Repositories
 
         public async Task<LexemeInputDto?> GetByIdAsync(int lexemeId)
         {
-            var lexeme = await _context.Lexemes.FirstOrDefaultAsync(x => x.Id == lexemeId);
-            CheckEntity(lexeme);
-
-            var translations = _context.Lexemes.Where(x =>
-                            _context.LexemeTranslationPairs
-                                .Where(y => y.LexemeId == lexeme.Id)
-                                .Select(y => y.TranslationId).Contains(x.Id))
-                            .Select(x => x.Word).ToList();
+            var lexeme = await _context.Lexemes.FirstOrDefaultAsync(x => x.Id == lexemeId)
+                ?? throw new ArgumentNullException(nameof(lexemeId), "The lexeme was not found.");
 
             var wordForms = _context.WordForms.Where(x => x.LexemeId == lexeme.Id)
             .Select(x => new WordFormDto
@@ -219,7 +196,6 @@ namespace DictionaryApplication.Repositories
             var result = new LexemeInputDto
             {
                 Lexeme = lexeme.Word,
-                Description = lexeme.Description,
                 WordForms = wordForms,
                 LexemeInformations = lexemeInformations
             };
@@ -233,7 +209,7 @@ namespace DictionaryApplication.Repositories
             {
                 "Synonym" => RelatedLexemeType.Synonym,
                 "Antonym" => RelatedLexemeType.Antonym,
-                "DerivedLexeme" => RelatedLexemeType.DerivedLexeme,
+                "Derivative" => RelatedLexemeType.Derivative,
                 _ => throw new InvalidOperationException($"Unknown RelatedLexemeType: {typeString}")
             };
         }
@@ -242,8 +218,8 @@ namespace DictionaryApplication.Repositories
         public async Task<List<LexemeInputDto>> GetAllAsync(params int[] userDictionaryIds)
         {
             var result = new List<LexemeInputDto>();
-            List<int> studiedLexemeIds = await _context.Lexemes.Where(x => userDictionaryIds.Contains(x.DictionaryId)
-                && x.LexemePairs != null && x.LexemePairs.Count > 0).Select(x => x.Id).ToListAsync();
+            List<int> studiedLexemeIds = await _context.Lexemes.Where(x => userDictionaryIds.Contains(x.DictionaryId))
+                .Select(x => x.Id).ToListAsync();
             foreach (var lexemeId in studiedLexemeIds)
             {
                 var lexeme = await GetByIdAsync(lexemeId);

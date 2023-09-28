@@ -53,12 +53,12 @@
             </th>
             <th>
                 <h5>
-                    Studied Lexeme (@Model.UserDictionary.StudiedLanguage.LangCode)
+                    Word (@Model.UserDictionary.StudiedLanguage.LangCode)
                 </h5>
             </th>
             <th>
                 <h5>
-                    Translation (@Model.UserDictionary.TranslationLanguage.LangCode)
+                    Translations (@Model.UserDictionary.TranslationLanguage.LangCode)
                 </h5>
             </th>
             <th>
@@ -74,11 +74,10 @@
             int counter = Model.FirstItemId;
             foreach (var item in Model.LexemeDetailsList.LexemeDetails)
             {
-                <tr class="@((item.Lexeme.Description != null
+                <tr class="@((item.Lexeme.LexemeInformations.Count > 3
+                    || item.Lexeme.WordForms.Any()
                     || item.Lexeme.LexemeInformations.Any(x =>
-                        x.Examples!=null && x.Examples.Any()
-                        || x.RelatedLexemes != null && x.RelatedLexemes.Any())
-                    || item.Lexeme.WordForms != null &&item.Lexeme.WordForms.Any())
+                        x.Examples.Any() || x.RelatedLexemes.Any()))
                 ? "table-row-link"
                 : "other")">
                     <td>
@@ -88,93 +87,152 @@
                         @Html.DisplayFor(modelItem => item.Lexeme.Word)
                     </td>
                     <td>
-                        @Html.Raw(item.TranslationsRepresentation.Replace("\n", "<br />"))
+                        <ul>
+                            @foreach (var translation in item.Lexeme.LexemeInformations.Take(3))
+                            {
+                                <li>@translation.Translation</li>
+                            }
+                        </ul>
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.TestResultsRepresentation)
                     </td>
                     <td class="right-td">
-                        <!-- <a class="small-link lexeme-link" asp-page="./Edit" asp-route-userDictionaryId="@Model.UserDictionary.Id"
-                           asp-route-lexemeId="@item.Lexeme.Id" asp-route-pageId="@Model.LexemeDetailsList.PagingInfo.CurrentPage">Edit</a> -->
+                        <a class="small-link lexeme-link" asp-page="./Edit" asp-route-userDictionaryId="@Model.UserDictionary.Id"
+                           asp-route-lexemeId="@item.Lexeme.Id" asp-route-pageId="@Model.LexemeDetailsList.PagingInfo.CurrentPage">Edit</a>
                         <a class="small-link lexeme-link" asp-page="./Delete" asp-route-userDictionaryId="@Model.UserDictionary.Id"
                            asp-route-lexemeId="@item.Lexeme.Id" asp-route-pageId="@Model.LexemeDetailsList.PagingInfo.CurrentPage">Delete</a>
                     </td>
                 </tr>
                 {
                     counter++;
-                    if (item.Lexeme.Description != null
+                    if (item.Lexeme.WordForms.Any()
                     || item.Lexeme.LexemeInformations.Any(x =>
-                    x.Examples != null && x.Examples.Any()
-                    || x.RelatedLexemes != null && x.RelatedLexemes.Any())
-                    || item.Lexeme.WordForms != null && item.Lexeme.WordForms.Any())
+                    x.Examples.Any() || x.RelatedLexemes.Any()))
                     {
                         <tr class="description-row" style="display: none;">
                             <td colspan="5">
                                 <div class="description-box">
-                                    <!-- Lexeme Informations -->
-                                    <div class="form-group">
-                                        <h3>Translations</h3>
-                                        @for (int i = 0; i < item.Lexeme.LexemeInformations.Count; i++)
+                                    <div class="lexeme-section">
+                                        <div class="left-block">
+                                            <h4>Word:</h4>
+                                            <h1 id="lexeme">@item.Lexeme.Word</h1>
+                                            @if (!string.IsNullOrEmpty(item.Lexeme.Transcription))
+                                            {
+                                                <h4>Transcription:</h4>
+                                                <h2 id="transcription">@item.Lexeme.Transcription</h2>
+                                            }
+                                        </div>
+                                        <div class="right-block">
+                                            @if (item.Lexeme.WordForms.Any())
+                                            {
+                                                <h4>Word Forms:</h4>
+                                                <ul>
+                                                    @foreach (var wordForm in item.Lexeme.WordForms)
+                                                    {
+                                                        <li class="editable wordForm">@wordForm.Word</li>
+                                                    }
+                                                </ul>
+                                            }
+                                        </div>
+                                    </div>
+
+
+                                    <div class="lexeme-info-section">
+                                        <h4 style="text-align: center">Translations</h4>
+                                        @for (var i = 0; i < item.Lexeme.LexemeInformations.Count; i++)
                                         {
-                                            <div class="lexeme-information-block">
-                                                <h4><strong>@(i + 1). @item.Lexeme.LexemeInformations.ToList()[i].Translation</strong></h4>
+                                            var lexemeInfo = item.Lexeme.LexemeInformations[i];
+                                            <div class="lexeme-info">
+                                                <div class="translation-block lexeme-information-element-block">
+                                                    <span class="editable translation">@lexemeInfo.Translation</span>
+                                                </div>
+                                                @if (lexemeInfo.Examples.Any() || lexemeInfo.RelatedLexemes.Any())
+                                                {
+                                                    <div class="grid-container">
 
-                                                @{
-                                                    if (item.Lexeme.LexemeInformations.ToList()[i].Examples != null
-                                                    && item.Lexeme.LexemeInformations.ToList()[i].Examples.Any())
-                                                    {
-                                                        <div class="examples">
-                                                            <strong>Examples:</strong>
-                                                            <ul>
-                                                                @for (int j = 0; j < item.Lexeme.LexemeInformations.ToList()[i].Examples.Count; j++)
-                                                                {
-                                                                    <li>
-                                                                        <strong>@(j + 1).</strong> @item.Lexeme.LexemeInformations.ToList()[i].Examples.ToList()[j].NativeExample
-                                                                        @item.Lexeme.LexemeInformations.ToList()[i].Examples.ToList()[j].TranslatedExample
-                                                                    </li>
-                                                                }
-                                                            </ul>
+                                                        <div class="examples ">
+                                                            @if (lexemeInfo.Examples.Any())
+                                                            {
+                                                                <div class="examples-inner">
+                                                                    <h5 class="lexeme-info-h5">Examples</h5>
+                                                                    <ul class="lexeme-info-list">
+                                                                        @for (var index = 0; index < lexemeInfo.Examples.Count; index++)
+                                                                        {
+                                                                            <li>
+                                                                                <div class="example">
+                                                                                    <span class="editable nativeExample">@lexemeInfo.Examples[index].NativeExample</span>
+                                                                                    <span class="editable translatedExample">@lexemeInfo.Examples[index].TranslatedExample</span>
+                                                                                    <br>
+                                                                                </div>
+                                                                            </li>
+                                                                        }
+                                                                    </ul>
+                                                                </div>
+                                                            }
                                                         </div>
-                                                    }
-                                                    if (item.Lexeme.LexemeInformations.ToList()[i].RelatedLexemes != null
-                                                    && item.Lexeme.LexemeInformations.ToList()[i].RelatedLexemes.Any())
-                                                    {
-                                                        var synonyms = item.Lexeme.LexemeInformations.ToList()[i].RelatedLexemes.Where(x => x.Type == "Synonym");
-                                                        var antonyms = item.Lexeme.LexemeInformations.ToList()[i].RelatedLexemes.Where(x => x.Type == "Antonym");
-                                                        var derivedLexemes = item.Lexeme.LexemeInformations.ToList()[i].RelatedLexemes.Where(x => x.Type == "DerivedLexeme");
 
-                                                        if (synonyms.Any())
-                                                        {
-                                                            <h5>Synonyms:</h5>
-                                                            <ul>
-                                                                @foreach (var synonym in synonyms)
-                                                                {
-                                                                    <li>@synonym.Word</li>
-                                                                }
-                                                            </ul>
-                                                        }
-                                                        if (antonyms.Any())
-                                                        {
-                                                            <h5>Antonyms:</h5>
-                                                            <ul>
-                                                                @foreach (var antonym in antonyms)
-                                                                {
-                                                                    <li>@antonym.Word</li>
-                                                                }
-                                                            </ul>
-                                                        }
-                                                        if (derivedLexemes.Any())
-                                                        {
-                                                            <h5>Related Lexemes:</h5>
-                                                            <ul>
-                                                                @foreach (var derivedLexeme in derivedLexemes)
-                                                                {
-                                                                    <li>@derivedLexeme.Word</li>
-                                                                }
-                                                            </ul>
-                                                        }
-                                                    }
+
+                                                        <div class="related-lexemes">
+                                                            @{
+                                                                var synonyms = lexemeInfo.RelatedLexemes.Where(x => x.Type == "Synonym");
+                                                                var antonyms = lexemeInfo.RelatedLexemes.Where(x => x.Type == "Antonym");
+                                                                var derivatives = lexemeInfo.RelatedLexemes.Where(x => x.Type == "Derivative");
+
+                                                                <div class="synonyms">
+                                                                    @if (synonyms.Any())
+                                                                    {
+                                                                        <div class="synonyms-inner">
+                                                                            <h5 class="lexeme-info-h5">Synonyms</h5>
+                                                                            <ul class="lexeme-info-list">
+                                                                                @foreach (var synonym in synonyms)
+                                                                                {
+                                                                                    <li>
+                                                                                        <span class="editable synonym">@synonym.Word</span>
+                                                                                    </li>
+                                                                                }
+                                                                            </ul>
+                                                                        </div>
+                                                                    }
+                                                                </div>
+                                                                <div class="antonyms">
+                                                                    @if (antonyms.Any())
+                                                                    {
+                                                                        <div class="antonyms-inner">
+                                                                            <h5 class="lexeme-info-h5">Antonyms</h5>
+                                                                            <ul class="lexeme-info-list">
+                                                                                @foreach (var antonym in antonyms)
+                                                                                {
+                                                                                    <li>
+                                                                                        <span class="editable antonym">@antonym.Word</span>
+                                                                                    </li>
+                                                                                }
+                                                                            </ul>
+                                                                        </div>
+                                                                    }
+                                                                </div>
+                                                                <div class="derivatives">
+                                                                    @if (derivatives.Any())
+                                                                    {
+                                                                        <div class="derivatives-inner">
+                                                                            <h5 class="lexeme-info-h5">Derivatives</h5>
+                                                                            <ul class="lexeme-info-list">
+                                                                                @foreach (var derivative in derivatives)
+                                                                                {
+                                                                                    <li>
+                                                                                        <span class="editable derivative">@derivative.Word</span>
+                                                                                    </li>
+                                                                                }
+                                                                            </ul>
+                                                                        </div>
+                                                                    }
+                                                                </div>
+                                                            }
+                                                        </div>
+
+                                                    </div>
                                                 }
+
                                             </div>
                                         }
                                     </div>
@@ -221,6 +279,7 @@
             $(".table-row-link").click(function (event) {
                 if (!$(event.target).is(".lexeme-link")) {
                     $(this).next(".description-row").toggle();
+                    $(this).toggleClass("table-row-toggled");
                 }
             });
         });
