@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using DictionaryApplication.Services;
-using DictionaryApplication.Models;
 using DictionaryApplication.Extensions;
 using Microsoft.AspNetCore.Authorization;
+using DictionaryApplication.DTOs;
 
 namespace DictionaryApplication.Pages.KnowledgeTest
 {
@@ -21,7 +21,7 @@ namespace DictionaryApplication.Pages.KnowledgeTest
         {
             await HttpContext.Session.LoadAsync();
 
-            var lexemeTestAttempts = HttpContext.Session.GetList<LexemeTestAttempt>("lexemeTestAttempts");
+            var lexemeTestAttempts = HttpContext.Session.GetList<LexemeTestAttemptDto>("lexemeTestAttempts");
 
             await _knowledgeTestService.SetResults(lexemeTestAttempts);
 

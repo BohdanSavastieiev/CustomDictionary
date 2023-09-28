@@ -43,7 +43,7 @@ namespace DictionaryApplication.Repositories
             {
                 var translation = new LexemeInformation
                 {
-                    TranslatedLexeme = lexeme,
+                    TranslatedLexemeId = lexeme.Id,
                     Translation = lexemeInformation.Translation
                 };
 
@@ -112,7 +112,7 @@ namespace DictionaryApplication.Repositories
             {
                 var translation = new LexemeInformation
                 {
-                    TranslatedLexeme = lexeme,
+                    TranslatedLexemeId = lexeme.Id,
                     Translation = lexemeInformation.Translation
                 };
 

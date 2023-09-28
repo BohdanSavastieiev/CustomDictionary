@@ -9,6 +9,7 @@ using DictionaryApplication.Data;
 using DictionaryApplication.Models;
 using DictionaryApplication.Paging;
 using DictionaryApplication.Repositories;
+using DictionaryApplication.Extensions;
 
 namespace DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView
 {
@@ -41,12 +42,25 @@ namespace DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView
             }
 
             // обработка сортировки
-            SortOrder = sortOrder;
+            if (sortOrder == null)
+            {
+                var sessionSortOrder = HttpContext.Session.GetString("sortOrder");
+                if (sessionSortOrder != null)
+                {
+                    SortOrder = sessionSortOrder;
+                }
+            }
+            else
+            {
+                SortOrder = sortOrder;
+                HttpContext.Session.SetString("sortOrder", sortOrder);
+            }
+            
             switch (SortOrder)
             {
                 default:
-                    LexemeDetailsList.LexemeDetails = LexemeDetailsList.LexemeDetails.OrderBy(x => x.Lexeme.Id).ToList();
                     SortOrder = "date_asc";
+                    LexemeDetailsList.LexemeDetails = LexemeDetailsList.LexemeDetails.OrderBy(x => x.Lexeme.Id).ToList();
                     break;
                 case "date_desc":
                     LexemeDetailsList.LexemeDetails = LexemeDetailsList.LexemeDetails.OrderByDescending(x => x.Lexeme.Id).ToList();
@@ -58,10 +72,10 @@ namespace DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView
                     LexemeDetailsList.LexemeDetails = LexemeDetailsList.LexemeDetails.OrderByDescending(x => x.Lexeme.Word).ToList();
                     break;
                 case "test_results_asc":
-                    LexemeDetailsList.LexemeDetails = LexemeDetailsList.LexemeDetails.OrderBy(x => x.TestResults).ThenBy(x => x.Lexeme.TotalTestAttempts).ToList();
+                    LexemeDetailsList.LexemeDetails = LexemeDetailsList.LexemeDetails.OrderBy(x => x.TestResults).ThenByDescending(x => x.Lexeme.TotalTestAttempts).ToList();
                     break;
                 case "test_results_desc":
-                    LexemeDetailsList.LexemeDetails = LexemeDetailsList.LexemeDetails.OrderByDescending(x => x.TestResults).ThenByDescending(x => x.Lexeme.TotalTestAttempts).ToList();
+                    LexemeDetailsList.LexemeDetails = LexemeDetailsList.LexemeDetails.OrderByDescending(x => x.TestResults).ThenBy(x => x.Lexeme.TotalTestAttempts).ToList();
                     break;
             }
 
@@ -71,7 +85,8 @@ namespace DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView
             {
                 searchString = searchString.ToLower();
                 LexemeDetailsList.LexemeDetails = LexemeDetailsList.LexemeDetails
-                    .Where(s => s.Lexeme.LexemeInformations.Any(t => t.Translation.Contains(searchString)))
+                    .Where(s => s.Lexeme.Word.Contains(searchString)
+                                || s.Lexeme.LexemeInformations.Any(t => t.Translation.Contains(searchString)))
                     .ToList();
             }
 
@@ -82,7 +97,19 @@ namespace DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView
             }
 
             PagingInfo pagingInfo = new PagingInfo();
-            pagingInfo.PageSize = pageSize == null ? 20 : (int)pageSize;
+            if (pageSize == null)
+            {
+                var sessionPageSize = HttpContext.Session.GetInt32("pageSize");
+                pagingInfo.PageSize = sessionPageSize == null 
+                    ? 20 
+                    : (int)sessionPageSize;
+            }
+            else
+            {
+                pagingInfo.PageSize = (int)pageSize;
+                HttpContext.Session.SetInt32("pageSize", (int)pageSize);
+            }
+
             pagingInfo.CurrentPage = pageId == 0 ? 1 : (int)pageId;
             pagingInfo.ItemsPerPage = pagingInfo.PageSize;
             FirstItemId = pagingInfo.PageSize * (pagingInfo.CurrentPage - 1) + 1;

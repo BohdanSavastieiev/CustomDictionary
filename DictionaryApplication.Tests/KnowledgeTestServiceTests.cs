@@ -1,5 +1,6 @@
 using Autofac.Extras.Moq;
 using DictionaryApplication;
+using DictionaryApplication.DTOs;
 using DictionaryApplication.Models;
 using DictionaryApplication.Repositories;
 using DictionaryApplication.Services;
@@ -93,7 +94,7 @@ namespace DictionaryApplication.Tests
         public async Task SetResults_ShouldUpdateLexemes()
         {
             var lexemeTestAttemptRepositoryMock = new Mock<ILexemeTestAttemptRepository>();
-            lexemeTestAttemptRepositoryMock.Setup(repo => repo.UpdateTestResultAsync(It.IsAny<LexemeTestAttempt>()))
+            lexemeTestAttemptRepositoryMock.Setup(repo => repo.UpdateTestResultAsync(It.IsAny<LexemeTestAttemptDto>()))
                                            .Returns(Task.CompletedTask);
 
             var knowledgeTestService = new KnowledgeTestService(lexemeTestAttemptRepositoryMock.Object);
@@ -120,21 +121,21 @@ namespace DictionaryApplication.Tests
         // Data
         #region
 
-        private List<LexemeTestAttempt> lexemeTestAttempts = new List<LexemeTestAttempt>
+        private List<LexemeTestAttemptDto> lexemeTestAttempts = new List<LexemeTestAttemptDto>
         {
-            new LexemeTestAttempt
+            new LexemeTestAttemptDto
             {
                 TestAnswer = "Apple",
                 Lexeme = new Lexeme{ Word = "Apple", TotalTestAttempts = 2, CorrectTestAttempts = 1 },
                 IsCorrectAnswer = true
             },
-            new LexemeTestAttempt
+            new LexemeTestAttemptDto
             {
                 TestAnswer = "Dog",
                 Lexeme = new Lexeme{ Word = "Dog", TotalTestAttempts = 2, CorrectTestAttempts = 1  },
                 IsCorrectAnswer = true
             },
-            new LexemeTestAttempt
+            new LexemeTestAttemptDto
             {
                 TestAnswer = "Love",
                 Lexeme = new Lexeme{ Word = "Break", TotalTestAttempts = 2, CorrectTestAttempts = 1  },
@@ -142,38 +143,38 @@ namespace DictionaryApplication.Tests
             },
         };
 
-        private List<LexemeTestAttempt> correctTestAttempts = new List<LexemeTestAttempt>
+        private List<LexemeTestAttemptDto> correctTestAttempts = new List<LexemeTestAttemptDto>
         {
-            new LexemeTestAttempt
+            new LexemeTestAttemptDto
             {
                 TestAnswer = "Apple",
                 Lexeme = new Lexeme{ Word = "Apple" },
             },
-            new LexemeTestAttempt
+            new LexemeTestAttemptDto
             {
                 TestAnswer = "Dog",
                 Lexeme = new Lexeme{ Word = "Dog" },
             },
-            new LexemeTestAttempt
+            new LexemeTestAttemptDto
             {
                 TestAnswer = "Break",
                 Lexeme = new Lexeme{ Word = "Break" },
             },        
         };
 
-        private List<LexemeTestAttempt> wrongTestAttempts = new List<LexemeTestAttempt>
+        private List<LexemeTestAttemptDto> wrongTestAttempts = new List<LexemeTestAttemptDto>
         {
-            new LexemeTestAttempt
+            new LexemeTestAttemptDto
             {
                 TestAnswer = "Apple",
                 Lexeme = new Lexeme{ Word = "Dog" },
             },
-            new LexemeTestAttempt
+            new LexemeTestAttemptDto
             {
                 TestAnswer = "Break",
                 Lexeme = new Lexeme{ Word = "Apple" },
             },
-            new LexemeTestAttempt
+            new LexemeTestAttemptDto
             {
                 TestAnswer = "Love",
                 Lexeme = new Lexeme{ Word = "Easy" },

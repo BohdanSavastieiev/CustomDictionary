@@ -47,7 +47,7 @@
         <tr>
             <th>
                 <h5>
-                    №
+                    № (@Model.LexemeDetailsList.PagingInfo.TotalItems)
                 </h5>
 
             </th>
@@ -63,7 +63,7 @@
             </th>
             <th>
                 <h5>
-                    Test Results
+                    Results
                 </h5>
             </th>
             <th></th>
@@ -95,7 +95,7 @@
                         </ul>
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.TestResultsRepresentation)
+                        @Html.Raw(item.TestResultsRepresentation.Replace("\n", "<br>"))
                     </td>
                     <td class="right-td">
                         <a class="small-link lexeme-link" asp-page="./Edit" asp-route-userDictionaryId="@Model.UserDictionary.Id"

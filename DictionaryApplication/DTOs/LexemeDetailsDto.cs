@@ -20,7 +20,7 @@ namespace DictionaryApplication.DTOs
                 : 0;
 
             TestResultsRepresentation = Lexeme.TotalTestAttempts > 0
-                ? $"{string.Format("{0,6:##0.00; }", TestResults * 100)} % — {Lexeme.CorrectTestAttempts} out of {Lexeme.TotalTestAttempts}"
+                ? $"{string.Format("{0,6:##0.00; }", TestResults * 100)} %\n({Lexeme.CorrectTestAttempts} out of {Lexeme.TotalTestAttempts})"
                 : "0 attempts";
         }
     }

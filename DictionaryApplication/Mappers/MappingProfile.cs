@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using DictionaryApplication.DTOs;
+using DictionaryApplication.Models;
+using DictionaryApplication.Models.DbModels;
 
 namespace DictionaryApplication.Mappers
 {
@@ -20,6 +22,17 @@ namespace DictionaryApplication.Mappers
                      .Concat(t.DerivedLexemes.Select(d => new RelatedLexemeDto { Word = d.Text, Type = RelatedLexemeType.Derivative }))
                      .ToList()
              }).ToList()));
+
+            CreateMap<Lexeme, LexemeDto>();
+            CreateMap<LexemeDto, Lexeme>();
+            CreateMap<LexemeInformation, LexemeInformationDto>();
+            CreateMap<LexemeInformationDto, LexemeInformation>();
+            CreateMap<Models.DbModels.WordForm, WordFormDto>();
+            CreateMap<WordFormDto, Models.DbModels.WordForm>();
+            CreateMap<UsageExample, UsageExampleDto>();
+            CreateMap<UsageExampleDto, UsageExample>();
+            CreateMap<RelatedLexeme, RelatedLexemeDto>();
+            CreateMap<RelatedLexemeDto, RelatedLexeme>();
         }
     }
 }

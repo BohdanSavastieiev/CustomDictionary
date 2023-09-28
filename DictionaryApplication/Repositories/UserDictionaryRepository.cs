@@ -95,7 +95,7 @@ namespace DictionaryApplication.Repositories
             var dictionary = await GetByIdAsync(id);
             return dictionary == null || dictionary.Lexemes == null 
                 ? 0 
-                : dictionary.Lexemes.Count(l => l.Id == id);
+                : dictionary.Lexemes.Count(l => l.DictionaryId == id);
         }
     }
 }

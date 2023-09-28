@@ -418,7 +418,7 @@ a {
 }
 
     #lexeme-table th:nth-child(1) {
-        width: 5%;
+        width: 10%;
         text-align: justify;
     }
 
@@ -440,7 +440,7 @@ a {
     }
 
     #lexeme-table th:nth-child(4) {
-        width: 15%;
+        width: 10%;
     }
 
     #lexeme-table th:nth-child(5) {

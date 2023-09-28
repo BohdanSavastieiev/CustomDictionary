@@ -1,8 +1,8 @@
-﻿namespace DictionaryApplication.Models
+﻿namespace DictionaryApplication.DTOs
 {
-    public class LexemeTestAttempt
+    public class LexemeTestAttemptDto
     {
-        public Lexeme Lexeme { get; set; } = null!;
+        public LexemeDto Lexeme { get; set; } = null!;
         public string LexemeTestRepresentation { get; set; } = null!;
         public string CorrectAnswerRepresentation { get; set; } = null!;
         public string? TestAnswer { get; set; }

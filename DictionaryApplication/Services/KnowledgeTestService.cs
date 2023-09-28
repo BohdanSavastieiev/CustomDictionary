@@ -1,4 +1,5 @@
 ﻿using DictionaryApplication.Data;
+using DictionaryApplication.DTOs;
 using DictionaryApplication.Models;
 using DictionaryApplication.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -23,8 +24,8 @@ namespace DictionaryApplication.Services
         }
         public async Task<int> GetTotalLexemesAmount(IEnumerable<int> userDictionaryIds)
         {
-            var lexemes = await _lexemeTestAttemptRepository.GetAllAsync(userDictionaryIds.ToArray());
-            return lexemes.Count;
+            var result = await _lexemeTestAttemptRepository.GetLexemesInDictionariesCount(userDictionaryIds.ToArray());
+            return result;
         }
         public async Task<bool> AreParametersValid(KnowledgeTestParameters testParameters)
         {
@@ -34,7 +35,7 @@ namespace DictionaryApplication.Services
                 && await ContainAnyLexemesAsync(testParameters.SelectedDictionaryIds)
                 && testParameters.NumberOfWords > 0;
         }
-        public async Task<List<LexemeTestAttempt>> GetLexemeTestAttemptsAsync(KnowledgeTestParameters testParameters)
+        public async Task<List<LexemeTestAttemptDto>> GetLexemeTestAttemptsAsync(KnowledgeTestParameters testParameters)
         {
             Random random = new Random();
             var lexemeTestAttempts = await _lexemeTestAttemptRepository.GetAllAsync(testParameters.SelectedDictionaryIds.ToArray());
@@ -77,7 +78,7 @@ namespace DictionaryApplication.Services
                     return lexemeTestAttempts;
             }
         }
-        public void CheckAnswers(List<LexemeTestAttempt> lexemes, KnowledgeTestParameters knowledgeTestParameters)
+        public void CheckAnswers(List<LexemeTestAttemptDto> lexemes, KnowledgeTestParameters knowledgeTestParameters)
         {
             foreach (var lexeme in lexemes)
             {
@@ -152,7 +153,7 @@ namespace DictionaryApplication.Services
 
             return d[s1.Length, s2.Length];
         }
-        public async Task SetResults(List<LexemeTestAttempt> lexemes)
+        public async Task SetResults(List<LexemeTestAttemptDto> lexemes)
         {
             foreach (var lexeme in lexemes)
             {

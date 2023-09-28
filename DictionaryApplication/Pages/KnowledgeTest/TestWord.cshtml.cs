@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.IdentityModel.Tokens;
-using DictionaryApplication.Models;
 using DictionaryApplication.Extensions;
 using Microsoft.AspNetCore.Authorization;
+using DictionaryApplication.DTOs;
 
 namespace DictionaryApplication.Pages.KnowledgeTest
 {
@@ -28,7 +28,7 @@ namespace DictionaryApplication.Pages.KnowledgeTest
                 return RedirectToPage("KnowledgeTestStart");
             }
 
-            var currentLexeme = HttpContext.Session.GetList<LexemeTestAttempt>("lexemeTestAttempts")[(int)currentLexemeId];
+            var currentLexeme = HttpContext.Session.GetList<LexemeTestAttemptDto>("lexemeTestAttempts")[(int)currentLexemeId];
             if (currentLexeme == null || currentLexeme.LexemeTestRepresentation == null)
             {
                 return RedirectToPage("KnowledgeTestStart");
@@ -48,7 +48,7 @@ namespace DictionaryApplication.Pages.KnowledgeTest
 
             await HttpContext.Session.LoadAsync();
 
-            var lexemeTestAttempts = HttpContext.Session.GetList<LexemeTestAttempt>("lexemeTestAttempts");
+            var lexemeTestAttempts = HttpContext.Session.GetList<LexemeTestAttemptDto>("lexemeTestAttempts");
             var currentLexemeId = HttpContext.Session.GetInt32("currentLexemeId");
             if (currentLexemeId == null)
             {

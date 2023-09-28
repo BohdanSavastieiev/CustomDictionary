@@ -1,3 +1,4 @@
+using DictionaryApplication.DTOs;
 using DictionaryApplication.Extensions;
 using DictionaryApplication.Models;
 using DictionaryApplication.Services;
@@ -21,11 +22,11 @@ namespace DictionaryApplication.Pages.KnowledgeTest
 
         [BindProperty]
         public List<int> CorrectedLexemeIds { get; set; } = null!;
-        public List<LexemeTestAttempt> LexemeTestAttempts { get; set; } = null!;
+        public List<LexemeTestAttemptDto> LexemeTestAttempts { get; set; } = null!;
 
         public IActionResult OnGet()
         {
-            var lexemeTestAttempts = HttpContext.Session.GetList<LexemeTestAttempt>("lexemeTestAttempts");
+            var lexemeTestAttempts = HttpContext.Session.GetList<LexemeTestAttemptDto>("lexemeTestAttempts");
             var knowledgeTestParameters = HttpContext.Session.GetObject<KnowledgeTestParameters>("knowledgeTestParameters");
 
             if (lexemeTestAttempts == null || knowledgeTestParameters == null)
@@ -55,7 +56,7 @@ namespace DictionaryApplication.Pages.KnowledgeTest
                 return Page();
             }
 
-            var lexemeTestAttempts = HttpContext.Session.GetList<LexemeTestAttempt>("lexemeTestAttempts");
+            var lexemeTestAttempts = HttpContext.Session.GetList<LexemeTestAttemptDto>("lexemeTestAttempts");
 
             foreach(var id in CorrectedLexemeIds)
             {

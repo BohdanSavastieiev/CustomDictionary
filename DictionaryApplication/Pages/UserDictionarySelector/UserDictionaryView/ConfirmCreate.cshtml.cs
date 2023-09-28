@@ -39,10 +39,18 @@ namespace DictionaryApplication.Pages.UserDictionarySelector.UserDictionaryView
             var srcLang = UserDictionary.StudiedLanguage.LangCode.Substring(0, 2).ToLowerInvariant();
             var dstLang = UserDictionary.TranslationLanguage.LangCode.Substring(0, 2).ToLowerInvariant();
 
-            var lexemeInput = await _lingvoInfoService.GetLingvoInfoAsync(lexeme, srcLang, dstLang, false);
-            LexemeInput = lexemeInput;
+            try
+            {
+                var lexemeInput = await _lingvoInfoService.GetLingvoInfoAsync(lexeme, srcLang, dstLang, false);
+                LexemeInput = lexemeInput;
 
-            return Page();
+                return Page();
+            }
+            catch (BadHttpRequestException ex)
+            {
+                return RedirectToPage("Create", new { userDictionaryId = userDictionaryId });
+            }
+
         }
 
 

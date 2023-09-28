@@ -1,5 +1,6 @@
-﻿using DictionaryApplication.Data;
-using DictionaryApplication.Models;
+﻿using AutoMapper;
+using DictionaryApplication.Data;
+using DictionaryApplication.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace DictionaryApplication.Repositories
@@ -7,14 +8,18 @@ namespace DictionaryApplication.Repositories
     public class LexemeTestAttemptRepository : ILexemeTestAttemptRepository
     {
         private readonly ApplicationDbContext _context;
-        public LexemeTestAttemptRepository(ApplicationDbContext context)
+        private readonly IMapper _mapper;
+        public LexemeTestAttemptRepository(
+            ApplicationDbContext context,
+            IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<List<LexemeTestAttempt>> GetAllAsync(params int[] userDictionaryIds)
+        public async Task<List<LexemeTestAttemptDto>> GetAllAsync(params int[] userDictionaryIds)
         {
-            var result = new List<LexemeTestAttempt>();
+            var result = new List<LexemeTestAttemptDto>();
             List<int> studiedLexemeIds = await _context.Lexemes
                 .Where(x => userDictionaryIds.Contains(x.DictionaryId))
                 .Select(x => x.Id)
@@ -32,7 +37,7 @@ namespace DictionaryApplication.Repositories
             return result;
         }
 
-        public async Task<LexemeTestAttempt?> GetByIdAsync(int lexemeId)
+        public async Task<LexemeTestAttemptDto?> GetByIdAsync(int lexemeId)
         {
             var lexeme = await _context.Lexemes
                 .Include(x => x.LexemeInformations)
@@ -40,15 +45,25 @@ namespace DictionaryApplication.Repositories
                 .FirstOrDefaultAsync(x => x.Id == lexemeId)
                 ?? throw new ArgumentNullException(nameof(lexemeId), "The lexeme for update was not found.");
 
-            var result = new LexemeTestAttempt
+            var result = new LexemeTestAttemptDto
             {
-                Lexeme = lexeme
+                Lexeme = _mapper.Map<LexemeDto>(lexeme)
             };
 
             return result;
         }
 
-        public async Task UpdateTestResultAsync(LexemeTestAttempt lexemeTest)
+        public async Task<int> GetLexemesInDictionariesCount(params int[] userDictionaryIds)
+        {
+            List<int> studiedLexemeIds = await _context.Lexemes
+                .Where(x => userDictionaryIds.Contains(x.DictionaryId))
+                .Select(x => x.Id)
+                .ToListAsync();
+
+            return studiedLexemeIds.Count;
+        }
+
+        public async Task UpdateTestResultAsync(LexemeTestAttemptDto lexemeTest)
         {
             var lexemeToUpdate = await _context.Lexemes.FindAsync(lexemeTest.Lexeme.Id)
                 ?? throw new ArgumentNullException(nameof(lexemeTest), "The lexeme for update was not found.");
